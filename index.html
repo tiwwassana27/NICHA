@@ -784,18 +784,24 @@ function renderAnswer(){
 
   clearInterval(activeAnswerTimer);
 
-  let left = 30;
-  el("answerTimer").textContent = left;
+  // คนที่ 6: นับถอยหลังตามเวลาจริงจาก Firebase 30 → 0
+  // ต่อให้หน้าจอ render ใหม่หรือมือถือหน่วง เวลาก็ไม่เริ่ม 30 ใหม่
+  const startedAt = Number(roomData.answerStartedAt) || Date.now();
 
-  activeAnswerTimer = setInterval(()=>{
-    left--;
-    el("answerTimer").textContent = Math.max(0,left);
+  function updateAnswerCountdown(){
+    const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+    const left = Math.max(0, 30 - elapsed);
+    el("answerTimer").textContent = String(left);
 
     if(left <= 0){
       clearInterval(activeAnswerTimer);
+      activeAnswerTimer = null;
       el("answerTimer").textContent = "0";
     }
-  },1000);
+  }
+
+  updateAnswerCountdown();
+  activeAnswerTimer = setInterval(updateAnswerCountdown, 250);
 }
 
 async function revealAnswer(){
