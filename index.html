@@ -3,86 +3,250 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>NRT TEAMWORK DRAW - Multiplayer</title>
+<title>NRT TEAMWORK DRAW - Animal Relay</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0b1720;color:#fff;font-family:Tahoma,Arial,sans-serif}
-main{max-width:680px;margin:auto;padding:14px}.card{background:#17313d;border:1px solid #486a78;border-radius:18px;padding:18px;margin:12px 0}
-h1{text-align:center;color:#ffd12a;margin:6px 0}.sub{text-align:center;color:#cfe2ea}
-button,input{width:100%;padding:14px;border:0;border-radius:12px;margin:6px 0;font-size:17px}
-button{background:#168347;color:white;font-weight:800;cursor:pointer}.secondary{background:#2f5968}.danger{background:#8e2c28}
-.hidden{display:none!important}.big{text-align:center;font-size:54px}.roomcode{text-align:center;font-size:36px;color:#ffd12a;font-weight:900;letter-spacing:4px}
-.player{padding:10px 12px;border-radius:12px;background:#10252e;margin:6px 0;display:flex;justify-content:space-between}
-.me{outline:2px solid #ffd12a}.host{color:#ffd12a}.status{text-align:center;color:#ffd12a;font-weight:800;min-height:28px}
-canvas{display:block;width:100%;height:360px;background:#fff;border-radius:16px;touch-action:none}.row{display:flex;gap:8px}.row>*{flex:1}
-.timer{text-align:center;font-size:38px;font-weight:900;color:#ffd12a}.prompt{background:#3b2750;padding:14px;border-radius:13px;text-align:center;font-size:20px}
-.finalimg{width:100%;border-radius:15px;background:white}.choice{text-align:left;background:#2d5260}
-.small{font-size:13px;color:#bdd0d8;text-align:center}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:#0a1820;
+  color:#fff;
+  font-family:Tahoma,Arial,sans-serif;
+}
+main{
+  max-width:680px;
+  margin:auto;
+  min-height:100vh;
+  padding:14px;
+}
+h1,h2,h3{margin:8px 0}
+h1{
+  text-align:center;
+  color:#ffd12a;
+}
+.sub{
+  text-align:center;
+  color:#cfe4ec;
+  margin-bottom:12px;
+}
+.card{
+  background:#17313d;
+  border:1px solid #476977;
+  border-radius:18px;
+  padding:18px;
+  margin:12px 0;
+  box-shadow:0 10px 30px #0004;
+}
+button,input{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:14px;
+  margin:6px 0;
+  font-size:17px;
+}
+button{
+  background:#168347;
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+button.secondary{background:#2f5968}
+button.danger{background:#8d2d2a}
+button:disabled{opacity:.45;cursor:not-allowed}
+.hidden{display:none!important}
+.big{
+  text-align:center;
+  font-size:58px;
+}
+.status{
+  min-height:28px;
+  text-align:center;
+  color:#ffd12a;
+  font-weight:800;
+}
+.room-code{
+  text-align:center;
+  font-size:38px;
+  color:#ffd12a;
+  font-weight:900;
+  letter-spacing:4px;
+}
+.player{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#10252e;
+  padding:11px 12px;
+  border-radius:12px;
+  margin:6px 0;
+}
+.player.me{outline:2px solid #ffd12a}
+.host{color:#ffd12a}
+.timer{
+  text-align:center;
+  font-size:44px;
+  font-weight:900;
+  color:#ffd12a;
+}
+.animal-card{
+  background:linear-gradient(145deg,#fff8d7,#f5ead0);
+  border-radius:22px;
+  padding:18px;
+  text-align:center;
+  color:#17242b;
+}
+.animal-emoji{
+  font-size:120px;
+  line-height:1.15;
+  filter:drop-shadow(0 8px 8px #0002);
+}
+.reference-box{
+  background:#0f242d;
+  border-radius:16px;
+  padding:12px;
+  margin:10px 0;
+}
+.reference-box img{
+  width:100%;
+  max-height:240px;
+  object-fit:contain;
+  background:#fff;
+  border-radius:14px;
+}
+canvas{
+  display:block;
+  width:100%;
+  height:430px;
+  background:#fff;
+  border-radius:18px;
+  touch-action:none;
+  box-shadow:0 10px 30px #0005;
+}
+.wait-icon{
+  font-size:70px;
+  text-align:center;
+}
+.result-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+.result-item{
+  background:#10252e;
+  border-radius:14px;
+  padding:10px;
+}
+.result-item img{
+  width:100%;
+  max-height:280px;
+  object-fit:contain;
+  background:#fff;
+  border-radius:12px;
+}
+.result-original{
+  background:linear-gradient(145deg,#fff8d7,#f5ead0);
+  color:#17242b;
+  border-radius:14px;
+  padding:12px;
+  text-align:center;
+}
+.result-original .animal-emoji{font-size:100px}
+.live-answer{
+  text-align:center;
+  font-size:22px;
+  line-height:1.5;
+}
+.note{
+  text-align:center;
+  font-size:13px;
+  color:#bfd1d8;
+}
 </style>
 </head>
-<body><main>
-<h1>🎨 NRT TEAMWORK DRAW</h1>
-<div class="sub">Multiplayer • ห้องละ 6 คน • วาดต่อกันคนละ 15 วินาที</div>
 
-<section id="home" class="card">
-  <div class="big">📱📱📱 🤝</div>
-  <input id="name" placeholder="ชื่อผู้เล่น">
-  <button id="createBtn">👑 สร้างห้องใหม่</button>
-  <div class="row">
-    <input id="joinCode" maxlength="6" placeholder="รหัสห้อง">
-    <button id="joinBtn" class="secondary">เข้าห้อง</button>
-  </div>
-  <div id="homeMsg" class="status"></div>
-</section>
+<body>
+<main>
+  <h1>🐾 NRT TEAMWORK DRAW</h1>
+  <div class="sub">Animal Picture Relay • 6 คน • วาดต่อกัน • คนสุดท้ายตอบสด</div>
 
-<section id="lobby" class="card hidden">
-  <h2 style="text-align:center">ห้องของทีม</h2>
-  <div id="roomCode" class="roomcode"></div>
-  <div class="small">ให้เพื่อนเปิดลิงก์เดียวกัน แล้วใส่รหัสนี้</div>
-  <div id="players"></div>
-  <div id="lobbyMsg" class="status"></div>
-  <button id="startGameBtn" class="hidden">▶ เริ่มเกมเมื่อครบ 6 คน</button>
-  <button id="leaveBtn" class="danger">ออกจากห้อง</button>
-</section>
+  <section id="homeScreen" class="card">
+    <div class="big">📱🐘🤝</div>
+    <input id="playerName" placeholder="ชื่อผู้เล่น">
+    <button id="createRoomBtn">👑 สร้างห้องใหม่</button>
+    <input id="joinRoomCode" maxlength="6" placeholder="รหัสห้อง 6 ตัว">
+    <button id="joinRoomBtn" class="secondary">เข้าห้อง</button>
+    <div id="homeMsg" class="status"></div>
+  </section>
 
-<section id="waitTurn" class="card hidden">
-  <div class="big">⏳</div>
-  <h2 id="waitTitle" style="text-align:center"></h2>
-  <div id="waitMsg" class="status"></div>
-</section>
+  <section id="lobbyScreen" class="card hidden">
+    <h2 style="text-align:center">ห้องของทีม</h2>
+    <div id="roomCodeText" class="room-code"></div>
+    <div class="note">ให้ผู้เล่นอีก 5 คนเปิดลิงก์เดียวกัน แล้วใส่รหัสห้องนี้</div>
+    <div id="playerList"></div>
+    <div id="lobbyMsg" class="status"></div>
+    <button id="startGameBtn" class="hidden">▶ เริ่มเกม</button>
+    <button id="leaveRoomBtn" class="danger">ออกจากห้อง</button>
+  </section>
 
-<section id="drawScreen" class="hidden">
-  <div class="card">
-    <div id="turnLabel" style="font-weight:800"></div>
-    <div id="promptBox" class="prompt hidden"></div>
-    <div class="timer">⏱ <span id="timer">15</span></div>
-    <div id="drawMsg" class="status"></div>
-  </div>
-  <canvas id="canvas"></canvas>
-  <div class="row">
-    <button id="clearBtn" class="secondary">🧽 ล้าง</button>
-    <button id="submitBtn">🔔 ส่งต่อ</button>
-  </div>
-</section>
+  <section id="promptScreen" class="card hidden">
+    <h2 style="text-align:center">👀 คนที่ 1 ดูภาพต้นฉบับ</h2>
+    <div class="animal-card">
+      <div id="promptEmoji" class="animal-emoji"></div>
+    </div>
+    <div class="timer"><span id="promptTimer">5</span></div>
+    <div class="status">จำภาพให้ดี! คนอื่นจะไม่เห็นภาพนี้</div>
+  </section>
 
-<section id="guessScreen" class="card hidden">
-  <h2>😂 ภาพสุดท้ายคืออะไร?</h2>
-  <img id="finalImage" class="finalimg">
-  <div id="guessChoices"></div>
-  <div id="guessMsg" class="status"></div>
-</section>
+  <section id="waitScreen" class="card hidden">
+    <div class="wait-icon">⏳</div>
+    <h2 id="waitTitle" style="text-align:center"></h2>
+    <div id="waitMsg" class="status"></div>
+  </section>
 
-<section id="endScreen" class="card hidden">
-  <div class="big">🏆</div>
-  <h1>TEAMWORK COMPLETE!</h1>
-  <div id="endText" class="status"></div>
-  <p style="text-align:center">🤝 สามัคคี • 👥 ช่วยเหลือข้ามทีม • ❤️ ไม่โทษกันไปมา</p>
-  <button id="restartBtn">กลับห้องรอ</button>
-</section>
+  <section id="drawScreen" class="hidden">
+    <div class="card">
+      <h2 id="drawTitle" style="text-align:center"></h2>
+      <div id="previousReference" class="reference-box hidden">
+        <div class="note">ดูเฉพาะภาพจากคนก่อน แล้ววาดใหม่บนพื้นที่สีขาวด้านล่าง</div>
+        <img id="previousImage" alt="ภาพจากคนก่อน">
+      </div>
+      <div class="timer">⏱ <span id="drawTimer">15</span></div>
+      <div id="drawMsg" class="status">หมดเวลาแล้วระบบจะส่งอัตโนมัติ</div>
+    </div>
+    <canvas id="drawCanvas"></canvas>
+    <div class="note">ไม่มีปุ่มล้าง / Undo / ส่ง — วาดให้ดีที่สุดภายในเวลา</div>
+  </section>
+
+  <section id="answerScreen" class="card hidden">
+    <h2 style="text-align:center">🎤 คนที่ 6 ทายสด!</h2>
+    <div class="reference-box">
+      <img id="answerImage" alt="ภาพจากคนที่ 5">
+    </div>
+    <div class="timer">⏱ <span id="answerTimer">20</span></div>
+    <div class="live-answer">
+      ดูภาพแล้วพูดคำตอบออกมาดัง ๆ ว่า<br>
+      <b>“นี่คือสัตว์อะไร?”</b>
+    </div>
+    <button id="revealBtn">🔍 ดูเฉลย</button>
+    <div class="note">ไม่มีตัวเลือกคำตอบ และไม่ต้องพิมพ์คำตอบ</div>
+  </section>
+
+  <section id="resultsScreen" class="card hidden">
+    <div class="big">😂🏆</div>
+    <h1>เฉลย!</h1>
+    <div id="resultsGallery" class="result-grid"></div>
+    <p style="text-align:center">
+      🤝 ส่งต่อให้เข้าใจ • 👥 ช่วยกัน • ❤️ ภาพเพี้ยนได้ แต่อย่าโทษกัน
+    </p>
+    <button id="playAgainBtn" class="hidden">🔄 เล่นรอบใหม่</button>
+  </section>
 </main>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+import {
+  getDatabase, ref, set, get, onValue, update, remove
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC4wbNF3-dE_YtdCBC4XmCzvuP7IBZ-kxQ",
@@ -94,129 +258,569 @@ const firebaseConfig = {
   appId: "1:216090591382:web:73ad2766eba3a5b6bd7ab7"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getDatabase(firebaseApp);
 
-const prompts = [
- {q:"พนักงานช่วยกันซ่อมเครื่องจักร",o:["พนักงานช่วยกันซ่อมเครื่องจักร","พนักงานกำลังกินข้าว","รถยกกำลังขนของ"]},
- {q:"เพื่อนต่างแผนกช่วยกันยกกล่องใหญ่",o:["เพื่อนต่างแผนกช่วยกันยกกล่องใหญ่","หัวหน้ากำลังประชุม","คนกำลังเล่นฟุตบอล"]},
- {q:"ทีมงานช่วยกันแก้เหตุฉุกเฉินในโรงงาน",o:["ทีมงานช่วยกันแก้เหตุฉุกเฉินในโรงงาน","พนักงานกำลังถ่ายรูป","คนกำลังพักกลางวัน"]}
+const animals = [
+  { id:"elephant", emoji:"🐘", name:"ช้าง" },
+  { id:"giraffe", emoji:"🦒", name:"ยีราฟ" },
+  { id:"crocodile", emoji:"🐊", name:"จระเข้" },
+  { id:"chicken", emoji:"🐓", name:"ไก่" },
+  { id:"turtle", emoji:"🐢", name:"เต่า" },
+  { id:"octopus", emoji:"🐙", name:"ปลาหมึก" },
+  { id:"butterfly", emoji:"🦋", name:"ผีเสื้อ" },
+  { id:"fish", emoji:"🐟", name:"ปลา" },
+  { id:"cat", emoji:"🐱", name:"แมว" },
+  { id:"dog", emoji:"🐶", name:"สุนัข" }
 ];
 
-let room="", myId=localStorage.getItem("nrt_uid") || crypto.randomUUID();
-localStorage.setItem("nrt_uid",myId);
-let meName="", roomData=null, unsub=null, turnTimer=null, left=15;
-let drawing=false,lastX=0,lastY=0;
+const screens = [
+  "homeScreen","lobbyScreen","promptScreen",
+  "waitScreen","drawScreen","answerScreen","resultsScreen"
+];
 
-const $=id=>document.getElementById(id);
-function show(id){["home","lobby","waitTurn","drawScreen","guessScreen","endScreen"].forEach(x=>$(x).classList.add("hidden"));$(id).classList.remove("hidden")}
-function code(){return Math.random().toString(36).slice(2,8).toUpperCase()}
-function playersArray(data){return data?.players ? Object.values(data.players).sort((a,b)=>a.seat-b.seat) : []}
+const el = id => document.getElementById(id);
+
+let roomCode = "";
+let roomData = null;
+let unsubscribeRoom = null;
+
+let myId = localStorage.getItem("nrt_animal_uid");
+if (!myId) {
+  myId = crypto.randomUUID();
+  localStorage.setItem("nrt_animal_uid", myId);
+}
+
+let myName = "";
+let activePromptTimer = null;
+let activeDrawTimer = null;
+let activeAnswerTimer = null;
+let currentDrawKey = "";
+let currentPromptKey = "";
+
+let drawing = false;
+let lastX = 0;
+let lastY = 0;
+
+function showScreen(id){
+  screens.forEach(s => el(s).classList.add("hidden"));
+  el(id).classList.remove("hidden");
+}
+
+function randomRoomCode(){
+  return Math.random().toString(36).slice(2,8).toUpperCase();
+}
+
+function getPlayers(data){
+  if(!data?.players) return [];
+  return Object.values(data.players).sort((a,b)=>a.seat-b.seat);
+}
+
+function getMe(){
+  return roomData?.players?.[myId] || null;
+}
+
+function animalById(id){
+  return animals.find(a=>a.id===id) || animals[0];
+}
+
+function stopAllTimers(){
+  clearInterval(activePromptTimer);
+  clearInterval(activeDrawTimer);
+  clearInterval(activeAnswerTimer);
+}
 
 async function createRoom(){
- meName=$("name").value.trim(); if(!meName){$("homeMsg").textContent="กรุณาใส่ชื่อ";return}
- room=code();
- const p={id:myId,name:meName,seat:1,host:true};
- await set(ref(db,"rooms/"+room),{status:"lobby",createdAt:Date.now(),hostId:myId,players:{[myId]:p}});
- enterRoom();
-}
-async function joinRoom(){
- meName=$("name").value.trim(); room=$("joinCode").value.trim().toUpperCase();
- if(!meName||!room){$("homeMsg").textContent="ใส่ชื่อและรหัสห้อง";return}
- const snap=await get(ref(db,"rooms/"+room)); if(!snap.exists()){$("homeMsg").textContent="ไม่พบห้อง";return}
- const data=snap.val(), arr=playersArray(data);
- if(arr.length>=6){$("homeMsg").textContent="ห้องเต็ม 6 คนแล้ว";return}
- if(data.status!=="lobby"){$("homeMsg").textContent="เกมเริ่มแล้ว เข้าห้องไม่ได้";return}
- const seat=Math.max(0,...arr.map(p=>p.seat))+1;
- await set(ref(db,`rooms/${room}/players/${myId}`),{id:myId,name:meName,seat,host:false});
- enterRoom();
-}
-function enterRoom(){
- show("lobby"); $("roomCode").textContent=room;
- if(unsub)unsub();
- unsub=onValue(ref(db,"rooms/"+room),snap=>{
-   if(!snap.exists()){show("home");$("homeMsg").textContent="ห้องถูกปิด";return}
-   roomData=snap.val(); renderState();
- });
-}
-function renderState(){
- const arr=playersArray(roomData), me=roomData.players?.[myId];
- if(roomData.status==="lobby"){
-   show("lobby"); $("roomCode").textContent=room;
-   $("players").innerHTML=arr.map(p=>`<div class="player ${p.id===myId?"me":""}"><span>${p.seat}. ${p.name}</span><span>${p.host?"👑 HOST":""}</span></div>`).join("");
-   $("lobbyMsg").textContent=`ผู้เล่น ${arr.length}/6`;
-   if(me?.host){$("startGameBtn").classList.remove("hidden");$("startGameBtn").disabled=arr.length!==6}
-   else $("startGameBtn").classList.add("hidden");
- } else if(roomData.status==="playing"){
-   const turn=roomData.turn||1;
-   if(me?.seat===turn) startMyTurn();
-   else {show("waitTurn");$("waitTitle").textContent=`รอคนวาด ${turn}/6`;$("waitMsg").textContent="รูปจะส่งต่อมาถึงคุณอัตโนมัติ";}
- } else if(roomData.status==="guess"){
-   renderGuess();
- } else if(roomData.status==="finished"){
-   show("endScreen");$("endText").textContent=roomData.result||"จบเกม!";
- }
-}
-async function startGame(){
- const pick=prompts[Math.floor(Math.random()*prompts.length)];
- await update(ref(db,"rooms/"+room),{status:"playing",turn:1,prompt:pick.q,choices:pick.o,image:"",submitted:false});
-}
-function startMyTurn(){
- if($("drawScreen").dataset.turn===String(roomData.turn))return;
- $("drawScreen").dataset.turn=String(roomData.turn);
- show("drawScreen"); $("turnLabel").textContent=`✏️ คุณคือคนวาด ${roomData.turn}/6`;
- $("promptBox").classList.toggle("hidden",roomData.turn!==1);
- if(roomData.turn===1)$("promptBox").textContent="🎯 "+roomData.prompt;
- $("drawMsg").textContent=roomData.turn>1?"วาดต่อจากรูปเพื่อน ห้ามลบของเพื่อน!":"จำโจทย์แล้วเริ่มวาดได้เลย";
- prepareCanvas(roomData.image);
- clearInterval(turnTimer);left=15;$("timer").textContent=left;
- turnTimer=setInterval(()=>{left--;$("timer").textContent=left;if(left<=0)submitTurn()},1000);
-}
-function prepareCanvas(img){
- const cv=$("canvas"), r=cv.getBoundingClientRect(); cv.width=r.width; cv.height=360;
- const ctx=cv.getContext("2d"); ctx.lineWidth=5;ctx.lineCap="round";ctx.strokeStyle="#111";
- ctx.fillStyle="#fff";ctx.fillRect(0,0,cv.width,cv.height);
- if(img){const im=new Image();im.onload=()=>ctx.drawImage(im,0,0,cv.width,cv.height);im.src=img}
-}
-function xy(ev){const r=$("canvas").getBoundingClientRect(),p=ev.touches?ev.touches[0]:ev;return[p.clientX-r.left,p.clientY-r.top]}
-function down(ev){ev.preventDefault();drawing=true;[lastX,lastY]=xy(ev)}
-function move(ev){if(!drawing)return;ev.preventDefault();let [x,y]=xy(ev),ctx=$("canvas").getContext("2d");ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(x,y);ctx.stroke();lastX=x;lastY=y}
-function up(){drawing=false}
-["mousedown","touchstart"].forEach(x=>$("canvas").addEventListener(x,down,{passive:false}));
-["mousemove","touchmove"].forEach(x=>$("canvas").addEventListener(x,move,{passive:false}));
-["mouseup","mouseleave","touchend"].forEach(x=>$("canvas").addEventListener(x,up));
-async function submitTurn(){
- clearInterval(turnTimer);
- const image=$("canvas").toDataURL("image/jpeg",0.7);
- if(roomData.turn<6) await update(ref(db,"rooms/"+room),{image,turn:roomData.turn+1});
- else await update(ref(db,"rooms/"+room),{image,status:"guess"});
-}
-function renderGuess(){
- show("guessScreen");$("finalImage").src=roomData.image||"";
- $("guessChoices").innerHTML="";
- [...roomData.choices].sort(()=>Math.random()-.5).forEach(o=>{
-   const b=document.createElement("button");b.className="choice";b.textContent=o;
-   b.onclick=async()=>{
-     const ok=o===roomData.prompt;
-     $("guessMsg").textContent=ok?"🎉 ทายถูก! TEAMWORK สำเร็จ":"😆 ทายผิด แต่ภาพนี้ฮามาก!";
-     await update(ref(db,"rooms/"+room),{status:"finished",result:ok?"🎉 ทีมทายถูก! 1,000 คะแนน":"😆 ทายผิด แต่ TEAMWORK ผ่าน!"});
-   };$("guessChoices").appendChild(b)
- })
-}
-async function leaveRoom(){
- if(!room)return;
- const wasHost=roomData?.hostId===myId;
- await remove(ref(db,`rooms/${room}/players/${myId}`));
- if(wasHost) await remove(ref(db,"rooms/"+room));
- room=""; if(unsub)unsub(); show("home");
-}
-async function restart(){
- if(roomData.hostId===myId) await update(ref(db,"rooms/"+room),{status:"lobby",turn:null,image:"",result:null});
- else show("lobby");
+  myName = el("playerName").value.trim();
+  if(!myName){
+    el("homeMsg").textContent = "กรุณาใส่ชื่อผู้เล่น";
+    return;
+  }
+
+  el("homeMsg").textContent = "กำลังสร้างห้อง...";
+
+  roomCode = randomRoomCode();
+
+  const player = {
+    id: myId,
+    name: myName,
+    seat: 1,
+    host: true
+  };
+
+  try{
+    await set(ref(db, "rooms/" + roomCode), {
+      status: "lobby",
+      hostId: myId,
+      createdAt: Date.now(),
+      players: {
+        [myId]: player
+      }
+    });
+
+    watchRoom();
+  }catch(err){
+    el("homeMsg").textContent = "สร้างห้องไม่สำเร็จ: " + err.message;
+  }
 }
 
-$("createBtn").onclick=createRoom;$("joinBtn").onclick=joinRoom;$("startGameBtn").onclick=startGame;$("leaveBtn").onclick=leaveRoom;
-$("submitBtn").onclick=submitTurn;$("clearBtn").onclick=()=>{if(roomData.turn===1)prepareCanvas("");else $("drawMsg").textContent="❌ ห้ามลบของเพื่อน!"};
-$("restartBtn").onclick=restart;
+async function joinRoom(){
+  myName = el("playerName").value.trim();
+  roomCode = el("joinRoomCode").value.trim().toUpperCase();
+
+  if(!myName || !roomCode){
+    el("homeMsg").textContent = "กรุณาใส่ชื่อและรหัสห้อง";
+    return;
+  }
+
+  el("homeMsg").textContent = "กำลังเข้าห้อง...";
+
+  try{
+    const snap = await get(ref(db, "rooms/" + roomCode));
+
+    if(!snap.exists()){
+      el("homeMsg").textContent = "ไม่พบห้องนี้";
+      return;
+    }
+
+    const data = snap.val();
+    const players = getPlayers(data);
+
+    if(data.status !== "lobby"){
+      el("homeMsg").textContent = "ห้องนี้เริ่มเกมแล้ว";
+      return;
+    }
+
+    if(players.length >= 6){
+      el("homeMsg").textContent = "ห้องเต็ม 6 คนแล้ว";
+      return;
+    }
+
+    const nextSeat = Math.max(0, ...players.map(p=>p.seat)) + 1;
+
+    await set(ref(db, `rooms/${roomCode}/players/${myId}`), {
+      id: myId,
+      name: myName,
+      seat: nextSeat,
+      host: false
+    });
+
+    watchRoom();
+
+  }catch(err){
+    el("homeMsg").textContent = "เข้าห้องไม่สำเร็จ: " + err.message;
+  }
+}
+
+function watchRoom(){
+  if(unsubscribeRoom) unsubscribeRoom();
+
+  unsubscribeRoom = onValue(
+    ref(db, "rooms/" + roomCode),
+    snap => {
+      if(!snap.exists()){
+        stopAllTimers();
+        roomData = null;
+        showScreen("homeScreen");
+        el("homeMsg").textContent = "ห้องถูกปิด";
+        return;
+      }
+
+      roomData = snap.val();
+      renderRoomState();
+    },
+    err => {
+      showScreen("homeScreen");
+      el("homeMsg").textContent = "Firebase error: " + err.message;
+    }
+  );
+}
+
+function renderRoomState(){
+  const me = getMe();
+  if(!me) return;
+
+  if(roomData.status === "lobby"){
+    renderLobby();
+    return;
+  }
+
+  if(roomData.status === "prompt"){
+    if(me.seat === 1){
+      renderPromptForSeat1();
+    }else{
+      showWaiting("คนที่ 1 กำลังดูภาพต้นฉบับ", "คุณจะไม่เห็นภาพต้นฉบับ");
+    }
+    return;
+  }
+
+  if(roomData.status === "drawing"){
+    const turn = Number(roomData.turn || 1);
+
+    if(me.seat === turn && turn <= 5){
+      renderDrawingTurn(turn);
+    }else{
+      showWaiting(
+        `กำลังวาดต่อ: คนที่ ${turn}/5`,
+        `รอคิวของคุณ • คุณคือผู้เล่นคนที่ ${me.seat}`
+      );
+    }
+    return;
+  }
+
+  if(roomData.status === "answer"){
+    if(me.seat === 6){
+      renderAnswer();
+    }else{
+      showWaiting(
+        "คนที่ 6 กำลังทายภาพสด",
+        "รอฟังคำตอบ แล้วรอดูเฉลยพร้อมกัน!"
+      );
+    }
+    return;
+  }
+
+  if(roomData.status === "results"){
+    renderResults();
+  }
+}
+
+function renderLobby(){
+  stopAllTimers();
+  currentDrawKey = "";
+  currentPromptKey = "";
+
+  showScreen("lobbyScreen");
+
+  const players = getPlayers(roomData);
+  const me = getMe();
+
+  el("roomCodeText").textContent = roomCode;
+
+  el("playerList").innerHTML = players.map(p => `
+    <div class="player ${p.id===myId ? "me" : ""}">
+      <span>${p.seat}. ${escapeHtml(p.name)}</span>
+      <span class="${p.host ? "host" : ""}">${p.host ? "👑 HOST" : ""}</span>
+    </div>
+  `).join("");
+
+  el("lobbyMsg").textContent = `ผู้เล่น ${players.length}/6`;
+
+  if(me.host){
+    el("startGameBtn").classList.remove("hidden");
+    el("startGameBtn").disabled = players.length !== 6;
+    el("startGameBtn").textContent =
+      players.length === 6 ? "▶ เริ่มเกม" : "รอผู้เล่นให้ครบ 6 คน";
+  }else{
+    el("startGameBtn").classList.add("hidden");
+  }
+}
+
+async function startGame(){
+  if(!roomData || getPlayers(roomData).length !== 6) return;
+
+  const animal = animals[Math.floor(Math.random()*animals.length)];
+
+  await update(ref(db, "rooms/" + roomCode), {
+    status: "prompt",
+    promptId: animal.id,
+    turn: 1,
+    drawings: null,
+    roundStartedAt: Date.now(),
+    revealAt: null
+  });
+}
+
+function renderPromptForSeat1(){
+  const key = `${roomCode}:${roomData.promptId}:${roomData.roundStartedAt || ""}`;
+
+  showScreen("promptScreen");
+
+  const animal = animalById(roomData.promptId);
+  el("promptEmoji").textContent = animal.emoji;
+
+  if(currentPromptKey === key) return;
+  currentPromptKey = key;
+
+  clearInterval(activePromptTimer);
+
+  let left = 5;
+  el("promptTimer").textContent = left;
+
+  activePromptTimer = setInterval(async ()=>{
+    left--;
+    el("promptTimer").textContent = Math.max(0,left);
+
+    if(left <= 0){
+      clearInterval(activePromptTimer);
+
+      try{
+        await update(ref(db, "rooms/" + roomCode), {
+          status: "drawing",
+          turn: 1,
+          turnStartedAt: Date.now()
+        });
+      }catch(err){
+        el("homeMsg").textContent = err.message;
+      }
+    }
+  },1000);
+}
+
+function showWaiting(title,msg){
+  stopAllTimers();
+  showScreen("waitScreen");
+  el("waitTitle").textContent = title;
+  el("waitMsg").textContent = msg;
+}
+
+function setupBlankCanvas(){
+  const canvas = el("drawCanvas");
+  const ratio = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+
+  canvas.width = Math.floor(rect.width * ratio);
+  canvas.height = Math.floor(430 * ratio);
+
+  const ctx = canvas.getContext("2d");
+
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0,0,rect.width,430);
+
+  ctx.lineWidth = 7;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = "#111111";
+}
+
+function renderDrawingTurn(turn){
+  const key = `${roomCode}:${roomData.roundStartedAt || ""}:turn:${turn}`;
+
+  showScreen("drawScreen");
+  el("drawTitle").textContent = `✏️ คนวาด ${turn}/5`;
+
+  if(turn === 1){
+    el("previousReference").classList.add("hidden");
+    el("drawMsg").textContent = "วาดจากภาพที่จำไว้ • หมดเวลาแล้วส่งอัตโนมัติ";
+  }else{
+    el("previousReference").classList.remove("hidden");
+    el("previousImage").src = roomData.drawings?.[String(turn-1)] || "";
+    el("drawMsg").textContent = "ดูภาพคนก่อน แล้ววาดใหม่ • หมดเวลาแล้วส่งอัตโนมัติ";
+  }
+
+  if(currentDrawKey === key) return;
+  currentDrawKey = key;
+
+  setupBlankCanvas();
+
+  clearInterval(activeDrawTimer);
+
+  let left = 15;
+  el("drawTimer").textContent = left;
+
+  activeDrawTimer = setInterval(async ()=>{
+    left--;
+    el("drawTimer").textContent = Math.max(0,left);
+
+    if(left <= 0){
+      clearInterval(activeDrawTimer);
+      await autoSubmitDrawing(turn);
+    }
+  },1000);
+}
+
+async function autoSubmitDrawing(turn){
+  const canvas = el("drawCanvas");
+  const imageData = canvas.toDataURL("image/jpeg",0.55);
+
+  el("drawMsg").textContent = "กำลังส่งภาพต่ออัตโนมัติ...";
+
+  const updates = {};
+  updates[`drawings/${turn}`] = imageData;
+
+  if(turn < 5){
+    updates["turn"] = turn + 1;
+    updates["turnStartedAt"] = Date.now();
+  }else{
+    updates["status"] = "answer";
+    updates["turn"] = 6;
+    updates["answerStartedAt"] = Date.now();
+  }
+
+  try{
+    await update(ref(db, "rooms/" + roomCode), updates);
+  }catch(err){
+    el("drawMsg").textContent = "ส่งภาพไม่สำเร็จ: " + err.message;
+  }
+}
+
+function renderAnswer(){
+  const key = `${roomCode}:${roomData.answerStartedAt || ""}`;
+
+  showScreen("answerScreen");
+  el("answerImage").src = roomData.drawings?.["5"] || "";
+
+  if(currentDrawKey === key) return;
+  currentDrawKey = key;
+
+  clearInterval(activeAnswerTimer);
+
+  let left = 20;
+  el("answerTimer").textContent = left;
+
+  activeAnswerTimer = setInterval(()=>{
+    left--;
+    el("answerTimer").textContent = Math.max(0,left);
+
+    if(left <= 0){
+      clearInterval(activeAnswerTimer);
+      el("answerTimer").textContent = "0";
+    }
+  },1000);
+}
+
+async function revealAnswer(){
+  await update(ref(db, "rooms/" + roomCode), {
+    status: "results",
+    revealAt: Date.now()
+  });
+}
+
+function renderResults(){
+  stopAllTimers();
+  showScreen("resultsScreen");
+
+  const animal = animalById(roomData.promptId);
+  const drawings = roomData.drawings || {};
+
+  let html = `
+    <div class="result-item">
+      <h3>🖼️ ภาพต้นฉบับ — ${animal.name}</h3>
+      <div class="result-original">
+        <div class="animal-emoji">${animal.emoji}</div>
+      </div>
+    </div>
+  `;
+
+  for(let i=1;i<=5;i++){
+    html += `
+      <div class="result-item">
+        <h3>✏️ ภาพคนที่ ${i}</h3>
+        <img src="${drawings[String(i)] || ""}" alt="ภาพคนที่ ${i}">
+      </div>
+    `;
+  }
+
+  el("resultsGallery").innerHTML = html;
+
+  if(getMe()?.host){
+    el("playAgainBtn").classList.remove("hidden");
+  }else{
+    el("playAgainBtn").classList.add("hidden");
+  }
+}
+
+async function playAgain(){
+  await update(ref(db, "rooms/" + roomCode), {
+    status: "lobby",
+    promptId: null,
+    turn: null,
+    drawings: null,
+    roundStartedAt: null,
+    answerStartedAt: null,
+    revealAt: null
+  });
+}
+
+async function leaveRoom(){
+  if(!roomCode || !roomData) return;
+
+  const isHost = roomData.hostId === myId;
+
+  try{
+    if(isHost){
+      await remove(ref(db, "rooms/" + roomCode));
+    }else{
+      await remove(ref(db, `rooms/${roomCode}/players/${myId}`));
+    }
+  }finally{
+    stopAllTimers();
+    if(unsubscribeRoom) unsubscribeRoom();
+    roomCode = "";
+    roomData = null;
+    showScreen("homeScreen");
+  }
+}
+
+function canvasPosition(event){
+  const canvas = el("drawCanvas");
+  const rect = canvas.getBoundingClientRect();
+  const point = event.touches ? event.touches[0] : event;
+
+  return {
+    x: point.clientX - rect.left,
+    y: point.clientY - rect.top
+  };
+}
+
+function pointerDown(event){
+  if(el("drawScreen").classList.contains("hidden")) return;
+  event.preventDefault();
+
+  drawing = true;
+  const p = canvasPosition(event);
+  lastX = p.x;
+  lastY = p.y;
+}
+
+function pointerMove(event){
+  if(!drawing) return;
+  event.preventDefault();
+
+  const canvas = el("drawCanvas");
+  const ctx = canvas.getContext("2d");
+  const p = canvasPosition(event);
+
+  ctx.beginPath();
+  ctx.moveTo(lastX,lastY);
+  ctx.lineTo(p.x,p.y);
+  ctx.stroke();
+
+  lastX = p.x;
+  lastY = p.y;
+}
+
+function pointerUp(){
+  drawing = false;
+}
+
+function escapeHtml(text){
+  return String(text)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+el("createRoomBtn").addEventListener("click", createRoom);
+el("joinRoomBtn").addEventListener("click", joinRoom);
+el("startGameBtn").addEventListener("click", startGame);
+el("leaveRoomBtn").addEventListener("click", leaveRoom);
+el("revealBtn").addEventListener("click", revealAnswer);
+el("playAgainBtn").addEventListener("click", playAgain);
+
+const canvas = el("drawCanvas");
+canvas.addEventListener("mousedown", pointerDown);
+canvas.addEventListener("mousemove", pointerMove);
+canvas.addEventListener("mouseup", pointerUp);
+canvas.addEventListener("mouseleave", pointerUp);
+canvas.addEventListener("touchstart", pointerDown, {passive:false});
+canvas.addEventListener("touchmove", pointerMove, {passive:false});
+canvas.addEventListener("touchend", pointerUp);
+
+window.addEventListener("beforeunload", stopAllTimers);
 </script>
-</body></html>
+</body>
+</html>
