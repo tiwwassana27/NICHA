@@ -3,732 +3,220 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>NRT TEAMWORK BATTLE</title>
-
+<title>NRT TEAMWORK DRAW - Multiplayer</title>
 <style>
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  background:#07151c;
-  color:#fff;
-  font-family:Tahoma,Arial,sans-serif;
-}
-
-#app{
-  max-width:650px;
-  margin:auto;
-  min-height:100vh;
-  padding:15px;
-}
-
-h1{
-  text-align:center;
-  color:#ffc928;
-}
-
-.card{
-  background:#15303b;
-  border-radius:18px;
-  padding:18px;
-  margin:12px 0;
-}
-
-button,input{
-  width:100%;
-  padding:14px;
-  margin:6px 0;
-  border:0;
-  border-radius:12px;
-  font-size:18px;
-}
-
-button{
-  background:#168442;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.hidden{
-  display:none !important;
-}
-
-.stats{
-  display:flex;
-  gap:8px;
-}
-
-.stat{
-  flex:1;
-  text-align:center;
-  background:#091a22;
-  padding:10px;
-  border-radius:10px;
-}
-
-.stat b{
-  color:#ffd42b;
-  font-size:24px;
-}
-
-#arena{
-  height:360px;
-  position:relative;
-  overflow:hidden;
-  background:linear-gradient(#29434d,#13232a);
-  border-radius:16px;
-}
-
-#player{
-  position:absolute;
-  bottom:12px;
-  left:45%;
-  font-size:52px;
-}
-
-.object{
-  position:absolute;
-  font-size:40px;
-}
-
-.controls{
-  display:flex;
-  gap:8px;
-}
-
-.controls button{
-  font-size:28px;
-}
-
-.message{
-  text-align:center;
-  min-height:34px;
-  color:#ffd42b;
-  font-weight:bold;
-  font-size:19px;
-}
-
-.quiz button{
-  background:#294d5b;
-  text-align:left;
-}
-
-.boss{
-  text-align:center;
-  font-size:90px;
-}
-
-.hpbar{
-  height:25px;
-  background:#333;
-  border-radius:20px;
-  overflow:hidden;
-}
-
-#bossHP{
-  height:100%;
-  width:100%;
-  background:#d84231;
-  transition:.2s;
-}
-
-.big{
-  text-align:center;
-  font-size:60px;
-}
+*{box-sizing:border-box}body{margin:0;background:#0b1720;color:#fff;font-family:Tahoma,Arial,sans-serif}
+main{max-width:680px;margin:auto;padding:14px}.card{background:#17313d;border:1px solid #486a78;border-radius:18px;padding:18px;margin:12px 0}
+h1{text-align:center;color:#ffd12a;margin:6px 0}.sub{text-align:center;color:#cfe2ea}
+button,input{width:100%;padding:14px;border:0;border-radius:12px;margin:6px 0;font-size:17px}
+button{background:#168347;color:white;font-weight:800;cursor:pointer}.secondary{background:#2f5968}.danger{background:#8e2c28}
+.hidden{display:none!important}.big{text-align:center;font-size:54px}.roomcode{text-align:center;font-size:36px;color:#ffd12a;font-weight:900;letter-spacing:4px}
+.player{padding:10px 12px;border-radius:12px;background:#10252e;margin:6px 0;display:flex;justify-content:space-between}
+.me{outline:2px solid #ffd12a}.host{color:#ffd12a}.status{text-align:center;color:#ffd12a;font-weight:800;min-height:28px}
+canvas{display:block;width:100%;height:360px;background:#fff;border-radius:16px;touch-action:none}.row{display:flex;gap:8px}.row>*{flex:1}
+.timer{text-align:center;font-size:38px;font-weight:900;color:#ffd12a}.prompt{background:#3b2750;padding:14px;border-radius:13px;text-align:center;font-size:20px}
+.finalimg{width:100%;border-radius:15px;background:white}.choice{text-align:left;background:#2d5260}
+.small{font-size:13px;color:#bdd0d8;text-align:center}
 </style>
 </head>
+<body><main>
+<h1>🎨 NRT TEAMWORK DRAW</h1>
+<div class="sub">Multiplayer • ห้องละ 6 คน • วาดต่อกันคนละ 15 วินาที</div>
 
-<body>
-
-<div id="app">
-
-<h1>⚡ NRT TEAMWORK BATTLE</h1>
-<p style="text-align:center">
-กู้โรงงาน • แข่งคะแนน • TEAMWORK
-</p>
-
-<!-- หน้าเริ่ม -->
-<section id="startScreen" class="card">
-
-<div class="big">🏭🏃</div>
-
-<h2 style="text-align:center">
-ภารกิจกู้โรงงาน
-</h2>
-
-<p>
-🏃 วิ่งเก็บอุปกรณ์<br>
-🤝 ช่วยเพื่อนต่างแผนก<br>
-🧠 ตอบสถานการณ์ TEAMWORK<br>
-🔧 ซ่อมเครื่องจักร<br>
-🤖 พิชิต BOSS
-</p>
-
-<input id="playerName" placeholder="ชื่อผู้เล่น">
-
-<button id="startBtn">
-▶ เริ่มเกม
-</button>
-
+<section id="home" class="card">
+  <div class="big">📱📱📱 🤝</div>
+  <input id="name" placeholder="ชื่อผู้เล่น">
+  <button id="createBtn">👑 สร้างห้องใหม่</button>
+  <div class="row">
+    <input id="joinCode" maxlength="6" placeholder="รหัสห้อง">
+    <button id="joinBtn" class="secondary">เข้าห้อง</button>
+  </div>
+  <div id="homeMsg" class="status"></div>
 </section>
 
-
-<!-- หน้าเกม -->
-<section id="gameScreen" class="hidden">
-
-<div class="stats">
-
-<div class="stat">
-คะแนน<br>
-<b id="score">0</b>
-</div>
-
-<div class="stat">
-COMBO<br>
-<b id="combo">x0</b>
-</div>
-
-<div class="stat">
-ด่าน<br>
-<b id="stage">1</b>
-</div>
-
-</div>
-
-<div id="message" class="message"></div>
-
-<div id="gameContent"></div>
-
+<section id="lobby" class="card hidden">
+  <h2 style="text-align:center">ห้องของทีม</h2>
+  <div id="roomCode" class="roomcode"></div>
+  <div class="small">ให้เพื่อนเปิดลิงก์เดียวกัน แล้วใส่รหัสนี้</div>
+  <div id="players"></div>
+  <div id="lobbyMsg" class="status"></div>
+  <button id="startGameBtn" class="hidden">▶ เริ่มเกมเมื่อครบ 6 คน</button>
+  <button id="leaveBtn" class="danger">ออกจากห้อง</button>
 </section>
 
+<section id="waitTurn" class="card hidden">
+  <div class="big">⏳</div>
+  <h2 id="waitTitle" style="text-align:center"></h2>
+  <div id="waitMsg" class="status"></div>
+</section>
 
-<!-- หน้าจบ -->
+<section id="drawScreen" class="hidden">
+  <div class="card">
+    <div id="turnLabel" style="font-weight:800"></div>
+    <div id="promptBox" class="prompt hidden"></div>
+    <div class="timer">⏱ <span id="timer">15</span></div>
+    <div id="drawMsg" class="status"></div>
+  </div>
+  <canvas id="canvas"></canvas>
+  <div class="row">
+    <button id="clearBtn" class="secondary">🧽 ล้าง</button>
+    <button id="submitBtn">🔔 ส่งต่อ</button>
+  </div>
+</section>
+
+<section id="guessScreen" class="card hidden">
+  <h2>😂 ภาพสุดท้ายคืออะไร?</h2>
+  <img id="finalImage" class="finalimg">
+  <div id="guessChoices"></div>
+  <div id="guessMsg" class="status"></div>
+</section>
+
 <section id="endScreen" class="card hidden">
-
-<div class="big">🏆</div>
-
-<h1>MISSION COMPLETE!</h1>
-
-<h2 id="finalScore" style="text-align:center"></h2>
-
-<p style="text-align:center">
-🤝 ร่วมมือกัน<br>
-👥 ช่วยเหลือข้ามทีม<br>
-💬 สื่อสารเข้าใจ<br>
-❤️ ไม่โทษกันไปมา
-</p>
-
-<button onclick="location.reload()">
-เล่นอีกครั้ง
-</button>
-
+  <div class="big">🏆</div>
+  <h1>TEAMWORK COMPLETE!</h1>
+  <div id="endText" class="status"></div>
+  <p style="text-align:center">🤝 สามัคคี • 👥 ช่วยเหลือข้ามทีม • ❤️ ไม่โทษกันไปมา</p>
+  <button id="restartBtn">กลับห้องรอ</button>
 </section>
+</main>
 
-</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyC4wbNF3-dE_YtdCBC4XmCzvuP7IBZ-kxQ",
+  authDomain: "nrt-teamwork-game.firebaseapp.com",
+  databaseURL: "https://nrt-teamwork-game-default-rtdb.firebaseio.com",
+  projectId: "nrt-teamwork-game",
+  storageBucket: "nrt-teamwork-game.firebasestorage.app",
+  messagingSenderId: "216090591382",
+  appId: "1:216090591382:web:73ad2766eba3a5b6bd7ab7"
+};
 
-<script>
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-let score = 0;
-let combo = 0;
-let playerX = 45;
-let collected = 0;
-let spawnTimer = null;
+const prompts = [
+ {q:"พนักงานช่วยกันซ่อมเครื่องจักร",o:["พนักงานช่วยกันซ่อมเครื่องจักร","พนักงานกำลังกินข้าว","รถยกกำลังขนของ"]},
+ {q:"เพื่อนต่างแผนกช่วยกันยกกล่องใหญ่",o:["เพื่อนต่างแผนกช่วยกันยกกล่องใหญ่","หัวหน้ากำลังประชุม","คนกำลังเล่นฟุตบอล"]},
+ {q:"ทีมงานช่วยกันแก้เหตุฉุกเฉินในโรงงาน",o:["ทีมงานช่วยกันแก้เหตุฉุกเฉินในโรงงาน","พนักงานกำลังถ่ายรูป","คนกำลังพักกลางวัน"]}
+];
 
-const startScreen = document.getElementById("startScreen");
-const gameScreen = document.getElementById("gameScreen");
-const endScreen = document.getElementById("endScreen");
+let room="", myId=localStorage.getItem("nrt_uid") || crypto.randomUUID();
+localStorage.setItem("nrt_uid",myId);
+let meName="", roomData=null, unsub=null, turnTimer=null, left=15;
+let drawing=false,lastX=0,lastY=0;
 
-const scoreText = document.getElementById("score");
-const comboText = document.getElementById("combo");
-const stageText = document.getElementById("stage");
+const $=id=>document.getElementById(id);
+function show(id){["home","lobby","waitTurn","drawScreen","guessScreen","endScreen"].forEach(x=>$(x).classList.add("hidden"));$(id).classList.remove("hidden")}
+function code(){return Math.random().toString(36).slice(2,8).toUpperCase()}
+function playersArray(data){return data?.players ? Object.values(data.players).sort((a,b)=>a.seat-b.seat) : []}
 
-const message = document.getElementById("message");
-const gameContent = document.getElementById("gameContent");
-
-document.getElementById("startBtn").addEventListener("click", startGame);
-
-
-function updateScore(){
-
-  scoreText.textContent = score;
-  comboText.textContent = "x" + combo;
-
+async function createRoom(){
+ meName=$("name").value.trim(); if(!meName){$("homeMsg").textContent="กรุณาใส่ชื่อ";return}
+ room=code();
+ const p={id:myId,name:meName,seat:1,host:true};
+ await set(ref(db,"rooms/"+room),{status:"lobby",createdAt:Date.now(),hostId:myId,players:{[myId]:p}});
+ enterRoom();
+}
+async function joinRoom(){
+ meName=$("name").value.trim(); room=$("joinCode").value.trim().toUpperCase();
+ if(!meName||!room){$("homeMsg").textContent="ใส่ชื่อและรหัสห้อง";return}
+ const snap=await get(ref(db,"rooms/"+room)); if(!snap.exists()){$("homeMsg").textContent="ไม่พบห้อง";return}
+ const data=snap.val(), arr=playersArray(data);
+ if(arr.length>=6){$("homeMsg").textContent="ห้องเต็ม 6 คนแล้ว";return}
+ if(data.status!=="lobby"){$("homeMsg").textContent="เกมเริ่มแล้ว เข้าห้องไม่ได้";return}
+ const seat=Math.max(0,...arr.map(p=>p.seat))+1;
+ await set(ref(db,`rooms/${room}/players/${myId}`),{id:myId,name:meName,seat,host:false});
+ enterRoom();
+}
+function enterRoom(){
+ show("lobby"); $("roomCode").textContent=room;
+ if(unsub)unsub();
+ unsub=onValue(ref(db,"rooms/"+room),snap=>{
+   if(!snap.exists()){show("home");$("homeMsg").textContent="ห้องถูกปิด";return}
+   roomData=snap.val(); renderState();
+ });
+}
+function renderState(){
+ const arr=playersArray(roomData), me=roomData.players?.[myId];
+ if(roomData.status==="lobby"){
+   show("lobby"); $("roomCode").textContent=room;
+   $("players").innerHTML=arr.map(p=>`<div class="player ${p.id===myId?"me":""}"><span>${p.seat}. ${p.name}</span><span>${p.host?"👑 HOST":""}</span></div>`).join("");
+   $("lobbyMsg").textContent=`ผู้เล่น ${arr.length}/6`;
+   if(me?.host){$("startGameBtn").classList.remove("hidden");$("startGameBtn").disabled=arr.length!==6}
+   else $("startGameBtn").classList.add("hidden");
+ } else if(roomData.status==="playing"){
+   const turn=roomData.turn||1;
+   if(me?.seat===turn) startMyTurn();
+   else {show("waitTurn");$("waitTitle").textContent=`รอคนวาด ${turn}/6`;$("waitMsg").textContent="รูปจะส่งต่อมาถึงคุณอัตโนมัติ";}
+ } else if(roomData.status==="guess"){
+   renderGuess();
+ } else if(roomData.status==="finished"){
+   show("endScreen");$("endText").textContent=roomData.result||"จบเกม!";
+ }
+}
+async function startGame(){
+ const pick=prompts[Math.floor(Math.random()*prompts.length)];
+ await update(ref(db,"rooms/"+room),{status:"playing",turn:1,prompt:pick.q,choices:pick.o,image:"",submitted:false});
+}
+function startMyTurn(){
+ if($("drawScreen").dataset.turn===String(roomData.turn))return;
+ $("drawScreen").dataset.turn=String(roomData.turn);
+ show("drawScreen"); $("turnLabel").textContent=`✏️ คุณคือคนวาด ${roomData.turn}/6`;
+ $("promptBox").classList.toggle("hidden",roomData.turn!==1);
+ if(roomData.turn===1)$("promptBox").textContent="🎯 "+roomData.prompt;
+ $("drawMsg").textContent=roomData.turn>1?"วาดต่อจากรูปเพื่อน ห้ามลบของเพื่อน!":"จำโจทย์แล้วเริ่มวาดได้เลย";
+ prepareCanvas(roomData.image);
+ clearInterval(turnTimer);left=15;$("timer").textContent=left;
+ turnTimer=setInterval(()=>{left--;$("timer").textContent=left;if(left<=0)submitTurn()},1000);
+}
+function prepareCanvas(img){
+ const cv=$("canvas"), r=cv.getBoundingClientRect(); cv.width=r.width; cv.height=360;
+ const ctx=cv.getContext("2d"); ctx.lineWidth=5;ctx.lineCap="round";ctx.strokeStyle="#111";
+ ctx.fillStyle="#fff";ctx.fillRect(0,0,cv.width,cv.height);
+ if(img){const im=new Image();im.onload=()=>ctx.drawImage(im,0,0,cv.width,cv.height);im.src=img}
+}
+function xy(ev){const r=$("canvas").getBoundingClientRect(),p=ev.touches?ev.touches[0]:ev;return[p.clientX-r.left,p.clientY-r.top]}
+function down(ev){ev.preventDefault();drawing=true;[lastX,lastY]=xy(ev)}
+function move(ev){if(!drawing)return;ev.preventDefault();let [x,y]=xy(ev),ctx=$("canvas").getContext("2d");ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(x,y);ctx.stroke();lastX=x;lastY=y}
+function up(){drawing=false}
+["mousedown","touchstart"].forEach(x=>$("canvas").addEventListener(x,down,{passive:false}));
+["mousemove","touchmove"].forEach(x=>$("canvas").addEventListener(x,move,{passive:false}));
+["mouseup","mouseleave","touchend"].forEach(x=>$("canvas").addEventListener(x,up));
+async function submitTurn(){
+ clearInterval(turnTimer);
+ const image=$("canvas").toDataURL("image/jpeg",0.7);
+ if(roomData.turn<6) await update(ref(db,"rooms/"+room),{image,turn:roomData.turn+1});
+ else await update(ref(db,"rooms/"+room),{image,status:"guess"});
+}
+function renderGuess(){
+ show("guessScreen");$("finalImage").src=roomData.image||"";
+ $("guessChoices").innerHTML="";
+ [...roomData.choices].sort(()=>Math.random()-.5).forEach(o=>{
+   const b=document.createElement("button");b.className="choice";b.textContent=o;
+   b.onclick=async()=>{
+     const ok=o===roomData.prompt;
+     $("guessMsg").textContent=ok?"🎉 ทายถูก! TEAMWORK สำเร็จ":"😆 ทายผิด แต่ภาพนี้ฮามาก!";
+     await update(ref(db,"rooms/"+room),{status:"finished",result:ok?"🎉 ทีมทายถูก! 1,000 คะแนน":"😆 ทายผิด แต่ TEAMWORK ผ่าน!"});
+   };$("guessChoices").appendChild(b)
+ })
+}
+async function leaveRoom(){
+ if(!room)return;
+ const wasHost=roomData?.hostId===myId;
+ await remove(ref(db,`rooms/${room}/players/${myId}`));
+ if(wasHost) await remove(ref(db,"rooms/"+room));
+ room=""; if(unsub)unsub(); show("home");
+}
+async function restart(){
+ if(roomData.hostId===myId) await update(ref(db,"rooms/"+room),{status:"lobby",turn:null,image:"",result:null});
+ else show("lobby");
 }
 
-
-function startGame(){
-
-  startScreen.classList.add("hidden");
-  gameScreen.classList.remove("hidden");
-
-  score = 0;
-  combo = 0;
-
-  updateScore();
-
-  startRunner();
-
-}
-
-
-/* =============================
-   ด่าน 1 วิ่งเก็บอุปกรณ์
-============================= */
-
-function startRunner(){
-
-  stageText.textContent = "1";
-
-  collected = 0;
-
-  gameContent.innerHTML = `
-
-  <div class="card">
-
-  <h2>🏃 ด่าน 1 : วิ่งเก็บอุปกรณ์</h2>
-
-  <p>
-  เก็บ 🔧 ⭐ ให้ครบ 8 ชิ้น<br>
-  หลบ 📦 สิ่งกีดขวาง
-  </p>
-
-  <div id="arena">
-
-  <div id="player">
-  🏃
-  </div>
-
-  </div>
-
-  <div class="controls">
-
-  <button id="leftBtn">
-  ⬅️
-  </button>
-
-  <button id="rightBtn">
-  ➡️
-  </button>
-
-  </div>
-
-  </div>
-
-  `;
-
-  document.getElementById("leftBtn").onclick = function(){
-    movePlayer(-1);
-  };
-
-  document.getElementById("rightBtn").onclick = function(){
-    movePlayer(1);
-  };
-
-  spawnTimer = setInterval(spawnObject,650);
-
-}
-
-
-function movePlayer(direction){
-
-  playerX += direction * 18;
-
-  if(playerX < 0){
-    playerX = 0;
-  }
-
-  if(playerX > 88){
-    playerX = 88;
-  }
-
-  document.getElementById("player").style.left =
-  playerX + "%";
-
-}
-
-
-function spawnObject(){
-
-  const arena = document.getElementById("arena");
-
-  if(!arena){
-    return;
-  }
-
-  const good = Math.random() < 0.72;
-
-  const obj = document.createElement("div");
-
-  obj.className = "object";
-
-  if(good){
-
-    obj.textContent =
-    Math.random() < 0.5 ? "🔧" : "⭐";
-
-  }else{
-
-    obj.textContent = "📦";
-
-  }
-
-  obj.style.left =
-  Math.random() * 88 + "%";
-
-  obj.style.top = "0px";
-
-  arena.appendChild(obj);
-
-  let y = 0;
-
-  const fall = setInterval(function(){
-
-    y += 14;
-
-    obj.style.top = y + "px";
-
-    if(y > 285){
-
-      const objectX =
-      parseFloat(obj.style.left);
-
-      const player =
-      document.getElementById("player");
-
-      if(player){
-
-        const playerPosition =
-        parseFloat(player.style.left || playerX);
-
-        if(
-          Math.abs(objectX-playerPosition) < 13
-        ){
-
-          if(good){
-
-            collected++;
-            combo++;
-
-            score +=
-            100 + combo * 10;
-
-            message.textContent =
-            "🔥 COMBO x" + combo;
-
-          }else{
-
-            combo = 0;
-
-            score =
-            Math.max(0,score-100);
-
-            message.textContent =
-            "💥 ชนสิ่งกีดขวาง!";
-
-          }
-
-          updateScore();
-
-        }
-
-      }
-
-      obj.remove();
-      clearInterval(fall);
-
-      if(collected >= 8){
-
-        clearInterval(spawnTimer);
-
-        setTimeout(showEmergency,500);
-
-      }
-
-    }
-
-  },70);
-
-}
-
-
-/* =============================
-   เหตุการณ์ TEAMWORK
-============================= */
-
-function showEmergency(){
-
-  stageText.textContent = "2";
-
-  message.textContent =
-  "🚨 เหตุการณ์ฉุกเฉิน!";
-
-  gameContent.innerHTML = `
-
-  <div class="card quiz">
-
-  <h2>
-  🚨 เพื่อนต่างแผนกต้องการความช่วยเหลือ
-  </h2>
-
-  <p>
-  งานของคุณเรียบร้อยแล้ว
-  และเพื่อนอีกแผนกกำลังทำงานไม่ทัน
-  คุณจะทำอย่างไร?
-  </p>
-
-  <button onclick="answerEmergency(true)">
-  🤝 เข้าไปช่วยและประสานงานร่วมกัน
-  </button>
-
-  <button onclick="answerEmergency(false)">
-  👉 บอกว่าไม่ใช่งานของเรา
-  </button>
-
-  <button onclick="answerEmergency(false)">
-  🏃 ปล่อยให้เขาจัดการเอง
-  </button>
-
-  </div>
-
-  `;
-
-}
-
-
-function answerEmergency(correct){
-
-  if(correct){
-
-    score += 500;
-
-    message.textContent =
-    "✅ TEAMWORK! +500 คะแนน";
-
-  }else{
-
-    score =
-    Math.max(0,score-150);
-
-    message.textContent =
-    "❌ TEAMWORK คือการช่วยกัน ไม่โยนปัญหา";
-
-  }
-
-  updateScore();
-
-  setTimeout(startRepair,900);
-
-}
-
-
-/* =============================
-   ด่านซ่อมเครื่อง
-============================= */
-
-let repairStep = 0;
-
-function startRepair(){
-
-  stageText.textContent = "3";
-
-  repairStep = 0;
-
-  gameContent.innerHTML = `
-
-  <div class="card">
-
-  <h2>
-  🔧 ด่าน 3 : ซ่อมเครื่องจักร
-  </h2>
-
-  <p>
-  กดตามลำดับที่ถูกต้อง
-  </p>
-
-  <button onclick="repairPart(0,this)">
-  💬 1. แจ้งและสื่อสารข้อมูล
-  </button>
-
-  <button onclick="repairPart(1,this)">
-  🤝 2. ขอความร่วมมือจากทีม
-  </button>
-
-  <button onclick="repairPart(2,this)">
-  🔧 3. ลงมือแก้ปัญหา
-  </button>
-
-  <button onclick="repairPart(3,this)">
-  ✅ 4. ตรวจสอบผล
-  </button>
-
-  </div>
-
-  `;
-
-}
-
-
-function repairPart(step,button){
-
-  if(step === repairStep){
-
-    repairStep++;
-
-    score += 200;
-
-    button.disabled = true;
-
-    button.style.background =
-    "#555";
-
-    message.textContent =
-    "PERFECT! " +
-    repairStep +
-    "/4";
-
-  }else{
-
-    score =
-    Math.max(0,score-100);
-
-    message.textContent =
-    "❌ ต้องทำตามลำดับ TEAMWORK";
-
-  }
-
-  updateScore();
-
-  if(repairStep === 4){
-
-    score += 500;
-
-    updateScore();
-
-    setTimeout(startBoss,700);
-
-  }
-
-}
-
-
-/* =============================
-   BOSS BATTLE
-============================= */
-
-let bossHealth = 100;
-
-function startBoss(){
-
-  stageText.textContent =
-  "BOSS";
-
-  bossHealth = 100;
-
-  gameContent.innerHTML = `
-
-  <div class="card">
-
-  <h2>
-  🤖 BOSS BATTLE!
-  </h2>
-
-  <div class="boss">
-  🤖
-  </div>
-
-  <div class="hpbar">
-
-  <div id="bossHP"></div>
-
-  </div>
-
-  <p style="text-align:center">
-
-  รวมพลัง TEAMWORK
-  เพื่อให้เครื่องจักรกลับมาทำงาน!
-
-  </p>
-
-  <button id="attackBtn">
-
-  🤝 รวมพลัง!
-
-  </button>
-
-  </div>
-
-  `;
-
-  document.getElementById("attackBtn")
-  .onclick = attackBoss;
-
-}
-
-
-function attackBoss(){
-
-  bossHealth -= 10;
-
-  score += 100;
-
-  if(bossHealth < 0){
-
-    bossHealth = 0;
-
-  }
-
-  document.getElementById("bossHP")
-  .style.width =
-  bossHealth + "%";
-
-  message.textContent =
-  "🔥 TEAM POWER!";
-
-  updateScore();
-
-  if(bossHealth <= 0){
-
-    document.getElementById("attackBtn")
-    .disabled = true;
-
-    score += 1000;
-
-    updateScore();
-
-    setTimeout(finishGame,700);
-
-  }
-
-}
-
-
-/* =============================
-   จบเกม
-============================= */
-
-function finishGame(){
-
-  gameScreen.classList.add("hidden");
-
-  endScreen.classList.remove("hidden");
-
-  const player =
-  document.getElementById("playerName").value
-  || "NRT Player";
-
-  document.getElementById("finalScore")
-  .textContent =
-  player +
-  " — " +
-  score.toLocaleString() +
-  " คะแนน";
-
-}
-
+$("createBtn").onclick=createRoom;$("joinBtn").onclick=joinRoom;$("startGameBtn").onclick=startGame;$("leaveBtn").onclick=leaveRoom;
+$("submitBtn").onclick=submitTurn;$("clearBtn").onclick=()=>{if(roomData.turn===1)prepareCanvas("");else $("drawMsg").textContent="❌ ห้ามลบของเพื่อน!"};
+$("restartBtn").onclick=restart;
 </script>
-
-</body>
-</html>
+</body></html>
