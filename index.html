@@ -1,20 +1,734 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NRT TEAMWORK BATTLE</title>
-<style>body{margin:0;background:#07151c;color:white;font-family:Arial,Tahoma}main{max-width:600px;margin:auto;padding:16px}h1{text-align:center;color:#ffc928}.card{background:#15303b;padding:18px;border-radius:18px;margin:12px 0}button,input{width:100%;padding:14px;margin:6px 0;border:0;border-radius:12px;font-size:18px}button{background:#168442;color:white;font-weight:bold}.hide{display:none}.stats{display:flex;gap:8px}.stats div{flex:1;background:#091a22;padding:10px;text-align:center;border-radius:10px}.arena{height:360px;position:relative;overflow:hidden;background:#29434d;border-radius:16px}.p{position:absolute;bottom:10px;font-size:50px}.o{position:absolute;font-size:38px}.ctrl{display:flex;gap:8px}.q button{background:#294d5b;text-align:left}.boss{text-align:center;font-size:90px}.bar{height:25px;background:#333;border-radius:20px;overflow:hidden}.hp{height:100%;background:#d84231}.msg{text-align:center;color:#ffd42b;font-weight:bold;min-height:28px}</style>
-<main><h1>⚡ NRT TEAMWORK BATTLE</h1><p style="text-align:center">กู้โรงงาน • แข่งคะแนน • TEAMWORK</p>
-<section id="s" class="card"><div style="font-size:60px;text-align:center">🏭🏃</div><p>วิ่งเก็บอุปกรณ์ → เจอสถานการณ์ → ซ่อมเครื่อง → BOSS</p><input id="n" placeholder="ชื่อผู้เล่น"><button onclick="start()">▶ เริ่มเกม</button></section>
-<section id="g" class="hide"><div class="stats"><div>คะแนน<br><b id="sc">0</b></div><div>COMBO<br><b id="co">x0</b></div><div>ด่าน<br><b id="st">1</b></div></div><div id="m" class="msg"></div><div id="c"></div></section>
-<section id="e" class="card hide" style="text-align:center"><div style="font-size:60px">🏆</div><h1>MISSION COMPLETE!</h1><h2 id="fin"></h2><p>ร่วมมือ • ช่วยเหลือ • สื่อสาร • ไม่โทษกัน</p><button onclick="location.reload()">เล่นอีกครั้ง</button></section></main>
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>NRT TEAMWORK BATTLE</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#07151c;
+  color:#fff;
+  font-family:Tahoma,Arial,sans-serif;
+}
+
+#app{
+  max-width:650px;
+  margin:auto;
+  min-height:100vh;
+  padding:15px;
+}
+
+h1{
+  text-align:center;
+  color:#ffc928;
+}
+
+.card{
+  background:#15303b;
+  border-radius:18px;
+  padding:18px;
+  margin:12px 0;
+}
+
+button,input{
+  width:100%;
+  padding:14px;
+  margin:6px 0;
+  border:0;
+  border-radius:12px;
+  font-size:18px;
+}
+
+button{
+  background:#168442;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.hidden{
+  display:none !important;
+}
+
+.stats{
+  display:flex;
+  gap:8px;
+}
+
+.stat{
+  flex:1;
+  text-align:center;
+  background:#091a22;
+  padding:10px;
+  border-radius:10px;
+}
+
+.stat b{
+  color:#ffd42b;
+  font-size:24px;
+}
+
+#arena{
+  height:360px;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(#29434d,#13232a);
+  border-radius:16px;
+}
+
+#player{
+  position:absolute;
+  bottom:12px;
+  left:45%;
+  font-size:52px;
+}
+
+.object{
+  position:absolute;
+  font-size:40px;
+}
+
+.controls{
+  display:flex;
+  gap:8px;
+}
+
+.controls button{
+  font-size:28px;
+}
+
+.message{
+  text-align:center;
+  min-height:34px;
+  color:#ffd42b;
+  font-weight:bold;
+  font-size:19px;
+}
+
+.quiz button{
+  background:#294d5b;
+  text-align:left;
+}
+
+.boss{
+  text-align:center;
+  font-size:90px;
+}
+
+.hpbar{
+  height:25px;
+  background:#333;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+#bossHP{
+  height:100%;
+  width:100%;
+  background:#d84231;
+  transition:.2s;
+}
+
+.big{
+  text-align:center;
+  font-size:60px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+<h1>⚡ NRT TEAMWORK BATTLE</h1>
+<p style="text-align:center">
+กู้โรงงาน • แข่งคะแนน • TEAMWORK
+</p>
+
+<!-- หน้าเริ่ม -->
+<section id="startScreen" class="card">
+
+<div class="big">🏭🏃</div>
+
+<h2 style="text-align:center">
+ภารกิจกู้โรงงาน
+</h2>
+
+<p>
+🏃 วิ่งเก็บอุปกรณ์<br>
+🤝 ช่วยเพื่อนต่างแผนก<br>
+🧠 ตอบสถานการณ์ TEAMWORK<br>
+🔧 ซ่อมเครื่องจักร<br>
+🤖 พิชิต BOSS
+</p>
+
+<input id="playerName" placeholder="ชื่อผู้เล่น">
+
+<button id="startBtn">
+▶ เริ่มเกม
+</button>
+
+</section>
+
+
+<!-- หน้าเกม -->
+<section id="gameScreen" class="hidden">
+
+<div class="stats">
+
+<div class="stat">
+คะแนน<br>
+<b id="score">0</b>
+</div>
+
+<div class="stat">
+COMBO<br>
+<b id="combo">x0</b>
+</div>
+
+<div class="stat">
+ด่าน<br>
+<b id="stage">1</b>
+</div>
+
+</div>
+
+<div id="message" class="message"></div>
+
+<div id="gameContent"></div>
+
+</section>
+
+
+<!-- หน้าจบ -->
+<section id="endScreen" class="card hidden">
+
+<div class="big">🏆</div>
+
+<h1>MISSION COMPLETE!</h1>
+
+<h2 id="finalScore" style="text-align:center"></h2>
+
+<p style="text-align:center">
+🤝 ร่วมมือกัน<br>
+👥 ช่วยเหลือข้ามทีม<br>
+💬 สื่อสารเข้าใจ<br>
+❤️ ไม่โทษกันไปมา
+</p>
+
+<button onclick="location.reload()">
+เล่นอีกครั้ง
+</button>
+
+</section>
+
+</div>
+
+
 <script>
-var score=0,combo=0,x=45,got=0,spawn;
-function u(){sc.textContent=score;co.textContent="x"+combo}
-function start(){s.className="hide";g.className="";run()}
-function move(d){x=Math.max(0,Math.min(88,x+d*18));document.getElementById("p").style.left=x+"%"}
-function run(){st.textContent="1";c.innerHTML='<div class="card"><h3>🏃 วิ่งเก็บ 🔧 ⭐ และหลบ 📦</h3><div id="a" class="arena"><div id="p" class="p">🏃</div></div><div class="ctrl"><button onclick="move(-1)">⬅️</button><button onclick="move(1)">➡️</button></div></div>';p.style.left=x+"%";spawn=setInterval(function(){var good=Math.random()<.72,o=document.createElement("div");o.className="o";o.textContent=good?(Math.random()<.5?"🔧":"⭐"):"📦";o.style.left=Math.random()*88+"%";o.style.top="0";a.appendChild(o);var y=0,t=setInterval(function(){y+=14;o.style.top=y+"px";if(y>290){if(Math.abs(parseFloat(o.style.left)-parseFloat(p.style.left))<13){if(good){got++;combo++;score+=100+combo*10;m.textContent="🔥 COMBO x"+combo}else{combo=0;score=Math.max(0,score-100);m.textContent="💥 หลบให้ดี!"}u()}o.remove();clearInterval(t);if(got>=7){clearInterval(spawn);quiz()}},75)},650)}
-function quiz(){st.textContent="2";c.innerHTML='<div class="card q"><h2>🚨 เพื่อนต่างแผนกต้องการความช่วยเหลือ!</h2><p>คุณจะทำอย่างไร?</p><button onclick="ans(1)">🤝 เข้าไปช่วยและประสานทีม</button><button onclick="ans(0)">👉 บอกว่าไม่ใช่งานเรา</button><button onclick="ans(0)">🏃 เดินผ่านไป</button></div>'}
-function ans(ok){if(ok){score+=500;m.textContent="✅ TEAMWORK +500"}else{score=Math.max(0,score-150);m.textContent="❌ ไม่โยนปัญหาให้กัน"}u();setTimeout(repair,600)}
-function repair(){st.textContent="3";window.pos=0;c.innerHTML='<div class="card"><h2>🔧 ซ่อมเครื่องจักร</h2><p>กดตามลำดับ 💬 → 🤝 → 🔧 → ✅</p><button onclick="part(this,0)">💬 สื่อสาร</button><button onclick="part(this,1)">🤝 ขอความช่วยเหลือ</button><button onclick="part(this,2)">🔧 ซ่อม</button><button onclick="part(this,3)">✅ ตรวจสอบ</button></div>'}
-function part(b,i){if(i===pos){pos++;score+=200;b.disabled=true;m.textContent="PERFECT! "+pos+"/4"}else{score=Math.max(0,score-100);m.textContent="ผิดลำดับ!"}u();if(pos===4)setTimeout(boss,500)}
-function boss(){st.textContent="BOSS";window.hp=100;c.innerHTML='<div class="card"><h2>🤖 BOSS BATTLE!</h2><div class="boss">🤖</div><div class="bar"><div id="h" class="hp" style="width:100%"></div></div><p>รวมพลังให้เครื่องจักรกลับมาทำงาน!</p><button id="hit" onclick="attack()">🤝 รวมพลัง!</button></div>'}
-function attack(){hp-=10;score+=100;h.style.width=hp+"%";m.textContent="🔥 TEAM POWER!";u();if(hp<=0){hit.disabled=true;score+=1000;setTimeout(done,500)}}
-function done(){g.className="hide";e.className="card";fin.textContent=(n.value||"NRT Player")+" — "+score+" คะแนน"}u()
+
+let score = 0;
+let combo = 0;
+let playerX = 45;
+let collected = 0;
+let spawnTimer = null;
+
+const startScreen = document.getElementById("startScreen");
+const gameScreen = document.getElementById("gameScreen");
+const endScreen = document.getElementById("endScreen");
+
+const scoreText = document.getElementById("score");
+const comboText = document.getElementById("combo");
+const stageText = document.getElementById("stage");
+
+const message = document.getElementById("message");
+const gameContent = document.getElementById("gameContent");
+
+document.getElementById("startBtn").addEventListener("click", startGame);
+
+
+function updateScore(){
+
+  scoreText.textContent = score;
+  comboText.textContent = "x" + combo;
+
+}
+
+
+function startGame(){
+
+  startScreen.classList.add("hidden");
+  gameScreen.classList.remove("hidden");
+
+  score = 0;
+  combo = 0;
+
+  updateScore();
+
+  startRunner();
+
+}
+
+
+/* =============================
+   ด่าน 1 วิ่งเก็บอุปกรณ์
+============================= */
+
+function startRunner(){
+
+  stageText.textContent = "1";
+
+  collected = 0;
+
+  gameContent.innerHTML = `
+
+  <div class="card">
+
+  <h2>🏃 ด่าน 1 : วิ่งเก็บอุปกรณ์</h2>
+
+  <p>
+  เก็บ 🔧 ⭐ ให้ครบ 8 ชิ้น<br>
+  หลบ 📦 สิ่งกีดขวาง
+  </p>
+
+  <div id="arena">
+
+  <div id="player">
+  🏃
+  </div>
+
+  </div>
+
+  <div class="controls">
+
+  <button id="leftBtn">
+  ⬅️
+  </button>
+
+  <button id="rightBtn">
+  ➡️
+  </button>
+
+  </div>
+
+  </div>
+
+  `;
+
+  document.getElementById("leftBtn").onclick = function(){
+    movePlayer(-1);
+  };
+
+  document.getElementById("rightBtn").onclick = function(){
+    movePlayer(1);
+  };
+
+  spawnTimer = setInterval(spawnObject,650);
+
+}
+
+
+function movePlayer(direction){
+
+  playerX += direction * 18;
+
+  if(playerX < 0){
+    playerX = 0;
+  }
+
+  if(playerX > 88){
+    playerX = 88;
+  }
+
+  document.getElementById("player").style.left =
+  playerX + "%";
+
+}
+
+
+function spawnObject(){
+
+  const arena = document.getElementById("arena");
+
+  if(!arena){
+    return;
+  }
+
+  const good = Math.random() < 0.72;
+
+  const obj = document.createElement("div");
+
+  obj.className = "object";
+
+  if(good){
+
+    obj.textContent =
+    Math.random() < 0.5 ? "🔧" : "⭐";
+
+  }else{
+
+    obj.textContent = "📦";
+
+  }
+
+  obj.style.left =
+  Math.random() * 88 + "%";
+
+  obj.style.top = "0px";
+
+  arena.appendChild(obj);
+
+  let y = 0;
+
+  const fall = setInterval(function(){
+
+    y += 14;
+
+    obj.style.top = y + "px";
+
+    if(y > 285){
+
+      const objectX =
+      parseFloat(obj.style.left);
+
+      const player =
+      document.getElementById("player");
+
+      if(player){
+
+        const playerPosition =
+        parseFloat(player.style.left || playerX);
+
+        if(
+          Math.abs(objectX-playerPosition) < 13
+        ){
+
+          if(good){
+
+            collected++;
+            combo++;
+
+            score +=
+            100 + combo * 10;
+
+            message.textContent =
+            "🔥 COMBO x" + combo;
+
+          }else{
+
+            combo = 0;
+
+            score =
+            Math.max(0,score-100);
+
+            message.textContent =
+            "💥 ชนสิ่งกีดขวาง!";
+
+          }
+
+          updateScore();
+
+        }
+
+      }
+
+      obj.remove();
+      clearInterval(fall);
+
+      if(collected >= 8){
+
+        clearInterval(spawnTimer);
+
+        setTimeout(showEmergency,500);
+
+      }
+
+    }
+
+  },70);
+
+}
+
+
+/* =============================
+   เหตุการณ์ TEAMWORK
+============================= */
+
+function showEmergency(){
+
+  stageText.textContent = "2";
+
+  message.textContent =
+  "🚨 เหตุการณ์ฉุกเฉิน!";
+
+  gameContent.innerHTML = `
+
+  <div class="card quiz">
+
+  <h2>
+  🚨 เพื่อนต่างแผนกต้องการความช่วยเหลือ
+  </h2>
+
+  <p>
+  งานของคุณเรียบร้อยแล้ว
+  และเพื่อนอีกแผนกกำลังทำงานไม่ทัน
+  คุณจะทำอย่างไร?
+  </p>
+
+  <button onclick="answerEmergency(true)">
+  🤝 เข้าไปช่วยและประสานงานร่วมกัน
+  </button>
+
+  <button onclick="answerEmergency(false)">
+  👉 บอกว่าไม่ใช่งานของเรา
+  </button>
+
+  <button onclick="answerEmergency(false)">
+  🏃 ปล่อยให้เขาจัดการเอง
+  </button>
+
+  </div>
+
+  `;
+
+}
+
+
+function answerEmergency(correct){
+
+  if(correct){
+
+    score += 500;
+
+    message.textContent =
+    "✅ TEAMWORK! +500 คะแนน";
+
+  }else{
+
+    score =
+    Math.max(0,score-150);
+
+    message.textContent =
+    "❌ TEAMWORK คือการช่วยกัน ไม่โยนปัญหา";
+
+  }
+
+  updateScore();
+
+  setTimeout(startRepair,900);
+
+}
+
+
+/* =============================
+   ด่านซ่อมเครื่อง
+============================= */
+
+let repairStep = 0;
+
+function startRepair(){
+
+  stageText.textContent = "3";
+
+  repairStep = 0;
+
+  gameContent.innerHTML = `
+
+  <div class="card">
+
+  <h2>
+  🔧 ด่าน 3 : ซ่อมเครื่องจักร
+  </h2>
+
+  <p>
+  กดตามลำดับที่ถูกต้อง
+  </p>
+
+  <button onclick="repairPart(0,this)">
+  💬 1. แจ้งและสื่อสารข้อมูล
+  </button>
+
+  <button onclick="repairPart(1,this)">
+  🤝 2. ขอความร่วมมือจากทีม
+  </button>
+
+  <button onclick="repairPart(2,this)">
+  🔧 3. ลงมือแก้ปัญหา
+  </button>
+
+  <button onclick="repairPart(3,this)">
+  ✅ 4. ตรวจสอบผล
+  </button>
+
+  </div>
+
+  `;
+
+}
+
+
+function repairPart(step,button){
+
+  if(step === repairStep){
+
+    repairStep++;
+
+    score += 200;
+
+    button.disabled = true;
+
+    button.style.background =
+    "#555";
+
+    message.textContent =
+    "PERFECT! " +
+    repairStep +
+    "/4";
+
+  }else{
+
+    score =
+    Math.max(0,score-100);
+
+    message.textContent =
+    "❌ ต้องทำตามลำดับ TEAMWORK";
+
+  }
+
+  updateScore();
+
+  if(repairStep === 4){
+
+    score += 500;
+
+    updateScore();
+
+    setTimeout(startBoss,700);
+
+  }
+
+}
+
+
+/* =============================
+   BOSS BATTLE
+============================= */
+
+let bossHealth = 100;
+
+function startBoss(){
+
+  stageText.textContent =
+  "BOSS";
+
+  bossHealth = 100;
+
+  gameContent.innerHTML = `
+
+  <div class="card">
+
+  <h2>
+  🤖 BOSS BATTLE!
+  </h2>
+
+  <div class="boss">
+  🤖
+  </div>
+
+  <div class="hpbar">
+
+  <div id="bossHP"></div>
+
+  </div>
+
+  <p style="text-align:center">
+
+  รวมพลัง TEAMWORK
+  เพื่อให้เครื่องจักรกลับมาทำงาน!
+
+  </p>
+
+  <button id="attackBtn">
+
+  🤝 รวมพลัง!
+
+  </button>
+
+  </div>
+
+  `;
+
+  document.getElementById("attackBtn")
+  .onclick = attackBoss;
+
+}
+
+
+function attackBoss(){
+
+  bossHealth -= 10;
+
+  score += 100;
+
+  if(bossHealth < 0){
+
+    bossHealth = 0;
+
+  }
+
+  document.getElementById("bossHP")
+  .style.width =
+  bossHealth + "%";
+
+  message.textContent =
+  "🔥 TEAM POWER!";
+
+  updateScore();
+
+  if(bossHealth <= 0){
+
+    document.getElementById("attackBtn")
+    .disabled = true;
+
+    score += 1000;
+
+    updateScore();
+
+    setTimeout(finishGame,700);
+
+  }
+
+}
+
+
+/* =============================
+   จบเกม
+============================= */
+
+function finishGame(){
+
+  gameScreen.classList.add("hidden");
+
+  endScreen.classList.remove("hidden");
+
+  const player =
+  document.getElementById("playerName").value
+  || "NRT Player";
+
+  document.getElementById("finalScore")
+  .textContent =
+  player +
+  " — " +
+  score.toLocaleString() +
+  " คะแนน";
+
+}
+
 </script>
+
+</body>
+</html>
