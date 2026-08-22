@@ -188,6 +188,16 @@ canvas{
     <button id="leaveRoomBtn" class="danger">ออกจากห้อง</button>
   </section>
 
+
+  <section id="quizScreen" class="card hidden">
+    <div class="big">🧠🤝</div>
+    <h2 style="text-align:center">TEAMWORK QUIZ</h2>
+    <div id="quizProgress" class="status"></div>
+    <h3 id="quizQuestion" style="line-height:1.5"></h3>
+    <div id="quizChoices"></div>
+    <div id="quizMsg" class="status"></div>
+  </section>
+
   <section id="promptScreen" class="card hidden">
     <h2 style="text-align:center">👀 คนที่ 1 ดูภาพต้นฉบับ</h2>
     <div class="animal-card">
@@ -210,7 +220,7 @@ canvas{
         <div class="note">ดูเฉพาะภาพจากคนก่อน แล้ววาดใหม่บนพื้นที่สีขาวด้านล่าง</div>
         <img id="previousImage" alt="ภาพจากคนก่อน">
       </div>
-      <div class="timer">⏱ <span id="drawTimer">15</span></div>
+      <div class="timer">⏱ <span id="drawTimer">20</span></div>
       <div id="drawMsg" class="status">หมดเวลาแล้วระบบจะส่งอัตโนมัติ</div>
     </div>
     <canvas id="drawCanvas"></canvas>
@@ -222,7 +232,7 @@ canvas{
     <div class="reference-box">
       <img id="answerImage" alt="ภาพจากคนที่ 5">
     </div>
-    <div class="timer">⏱ <span id="answerTimer">20</span></div>
+    <div class="timer">⏱ <span id="answerTimer">30</span></div>
     <div class="live-answer">
       ดูภาพแล้วพูดคำตอบออกมาดัง ๆ ว่า<br>
       <b>“นี่คือสัตว์อะไร?”</b>
@@ -262,20 +272,35 @@ const firebaseApp = initializeApp(firebaseConfig);
 const db = getDatabase(firebaseApp);
 
 const animals = [
-  { id:"elephant", emoji:"🐘", name:"ช้าง" },
-  { id:"giraffe", emoji:"🦒", name:"ยีราฟ" },
-  { id:"crocodile", emoji:"🐊", name:"จระเข้" },
-  { id:"chicken", emoji:"🐓", name:"ไก่" },
-  { id:"turtle", emoji:"🐢", name:"เต่า" },
-  { id:"octopus", emoji:"🐙", name:"ปลาหมึก" },
-  { id:"butterfly", emoji:"🦋", name:"ผีเสื้อ" },
-  { id:"fish", emoji:"🐟", name:"ปลา" },
-  { id:"cat", emoji:"🐱", name:"แมว" },
-  { id:"dog", emoji:"🐶", name:"สุนัข" }
+  {id:"elephant",emoji:"🐘",name:"ช้าง"},{id:"giraffe",emoji:"🦒",name:"ยีราฟ"},
+  {id:"lion",emoji:"🦁",name:"สิงโต"},{id:"tiger",emoji:"🐯",name:"เสือ"},
+  {id:"panda",emoji:"🐼",name:"แพนด้า"},{id:"monkey",emoji:"🐵",name:"ลิง"},
+  {id:"dog",emoji:"🐶",name:"สุนัข"},{id:"cat",emoji:"🐱",name:"แมว"},
+  {id:"rabbit",emoji:"🐰",name:"กระต่าย"},{id:"pig",emoji:"🐷",name:"หมู"},
+  {id:"cow",emoji:"🐮",name:"วัว"},{id:"horse",emoji:"🐴",name:"ม้า"},
+  {id:"crocodile",emoji:"🐊",name:"จระเข้"},{id:"turtle",emoji:"🐢",name:"เต่า"},
+  {id:"penguin",emoji:"🐧",name:"เพนกวิน"},{id:"chicken",emoji:"🐓",name:"ไก่"},
+  {id:"octopus",emoji:"🐙",name:"ปลาหมึก"},{id:"crab",emoji:"🦀",name:"ปู"},
+  {id:"butterfly",emoji:"🦋",name:"ผีเสื้อ"},{id:"frog",emoji:"🐸",name:"กบ"}
+];
+
+const teamworkQuestions = [
+  {q:"เพื่อนต่างแผนกมีงานเร่งและงานของเราทำเสร็จแล้ว ควรทำอย่างไร?",a:["เข้าไปช่วยและประสานงานกัน","บอกว่าไม่ใช่งานของเรา","ปล่อยให้เพื่อนจัดการเอง"],correct:0},
+  {q:"เมื่อเกิดปัญหาในทีม สิ่งใดเหมาะสมที่สุด?",a:["ช่วยกันหาสาเหตุและทางแก้","รีบหาว่าใครผิด","ไม่พูดถึงปัญหา"],correct:0},
+  {q:"การทำงานร่วมกันอย่างสามัคคีหมายถึงข้อใด?",a:["ร่วมมือและรับฟังกัน","ต่างคนต่างทำโดยไม่สื่อสาร","แข่งขันกันเองในทีม"],correct:0},
+  {q:"ถ้าเพื่อนทำผิดพลาด เราควรทำอย่างไร?",a:["ช่วยกันแก้และเรียนรู้ร่วมกัน","ตำหนิต่อหน้าทุกคน","โยนความรับผิดชอบให้เพื่อน"],correct:0},
+  {q:"ทีมอื่นขอข้อมูลที่จำเป็นต่อการแก้ปัญหา เราควรทำอย่างไร?",a:["ให้ข้อมูลและช่วยประสานงาน","เก็บข้อมูลไว้กับทีมเรา","ให้เขาไปหาเอง"],correct:0},
+  {q:"เมื่อความคิดเห็นในทีมไม่ตรงกัน ควรทำอย่างไร?",a:["รับฟังและหาข้อตกลงร่วมกัน","ยืนยันว่าความคิดเราถูกเท่านั้น","หยุดคุยกัน"],correct:0},
+  {q:"ถ้างานใกล้ไม่ทันกำหนด วิธีใดแสดง TEAMWORK?",a:["แจ้งทีมและช่วยกันจัดลำดับงาน","ปิดปัญหาไว้ไม่ให้ใครรู้","รอให้หัวหน้ามาแก้คนเดียว"],correct:0},
+  {q:"ข้อใดตรงกับค่านิยม 'ไม่โทษกันไปมา'?",a:["มองปัญหาและแก้ร่วมกัน","หาคนรับผิดก่อนเสมอ","บอกว่าเป็นความผิดอีกแผนก"],correct:0},
+  {q:"เมื่อเพื่อนขอความช่วยเหลือข้ามทีม ควรทำอย่างไร?",a:["ช่วยเท่าที่ทำได้และประสานผู้เกี่ยวข้อง","ปฏิเสธทันที","บอกให้รอโดยไม่แจ้งเหตุผล"],correct:0},
+  {q:"การสื่อสารที่ดีในทีมควรเป็นแบบใด?",a:["ชัดเจน รับฟัง และส่งข้อมูลครบ","พูดเฉพาะตอนเกิดปัญหาใหญ่","เก็บข้อมูลไว้กับตัวเอง"],correct:0},
+  {q:"ถ้าเห็นเพื่อนกำลังทำงานเสี่ยงผิดพลาด ควรทำอย่างไร?",a:["เตือนและช่วยตรวจสอบด้วยกัน","ปล่อยให้ผิดแล้วค่อยบอก","ถ่ายรูปไว้เพื่อโทษภายหลัง"],correct:0},
+  {q:"ทีมทำงานสำเร็จเพราะทุกคนช่วยกัน ควรทำอย่างไร?",a:["ชื่นชมความร่วมมือของทีม","ให้เครดิตคนเดียว","บอกว่าเป็นหน้าที่อยู่แล้ว"],correct:0}
 ];
 
 const screens = [
-  "homeScreen","lobbyScreen","promptScreen",
+  "homeScreen","lobbyScreen","quizScreen","promptScreen",
   "waitScreen","drawScreen","answerScreen","resultsScreen"
 ];
 
@@ -445,6 +470,11 @@ function renderRoomState(){
     return;
   }
 
+  if(roomData.status === "quiz"){
+    renderQuiz();
+    return;
+  }
+
   if(roomData.status === "prompt"){
     if(me.seat === 1){
       renderPromptForSeat1();
@@ -519,16 +549,104 @@ function renderLobby(){
 async function startGame(){
   if(!roomData || getPlayers(roomData).length !== 6) return;
 
-  const animal = animals[Math.floor(Math.random()*animals.length)];
+  try{
+    // Global pool: once an animal is claimed, it stays used until an admin reset.
+    const usedSnap = await get(ref(db, "usedAnimals"));
+    const used = usedSnap.exists() ? usedSnap.val() : {};
+    const available = animals.filter(a => !used[a.id]);
 
-  await update(ref(db, "rooms/" + roomCode), {
-    status: "prompt",
-    promptId: animal.id,
-    turn: 1,
-    drawings: null,
-    roundStartedAt: Date.now(),
-    revealAt: null
+    if(available.length === 0){
+      el("lobbyMsg").textContent = "โจทย์สัตว์ถูกใช้ครบ 20 รูปแล้ว กรุณารีเซ็ตชุดเกม";
+      return;
+    }
+
+    // Pick one candidate, then claim it transaction-style using a simple exclusive marker.
+    // Re-check immediately before claiming to reduce collisions between rooms starting close together.
+    let pool = [...available].sort(()=>Math.random()-0.5);
+    let animal = null;
+
+    for(const candidate of pool){
+      const claimRef = ref(db, "usedAnimals/" + candidate.id);
+      const claimSnap = await get(claimRef);
+      if(!claimSnap.exists()){
+        await set(claimRef, {roomCode, usedAt:Date.now()});
+        const verify = await get(claimRef);
+        if(verify.val()?.roomCode === roomCode){
+          animal = candidate;
+          break;
+        }
+      }
+    }
+
+    if(!animal){
+      el("lobbyMsg").textContent = "มีหลายห้องกำลังเริ่มพร้อมกัน กรุณากดเริ่มเกมอีกครั้ง";
+      return;
+    }
+
+    await update(ref(db, "rooms/" + roomCode), {
+      status: "quiz",
+      promptId: animal.id,
+      quizPassed: null,
+      turn: 1,
+      drawings: null,
+      roundStartedAt: Date.now(),
+      revealAt: null
+    });
+  }catch(err){
+    el("lobbyMsg").textContent = "เริ่มเกมไม่สำเร็จ: " + err.message;
+  }
+}
+
+function renderQuiz(){
+  stopAllTimers();
+  showScreen("quizScreen");
+
+  const me = getMe();
+  const passed = roomData.quizPassed || {};
+  const passedCount = Object.keys(passed).filter(id=>passed[id]===true).length;
+
+  el("quizProgress").textContent = `ผ่านแล้ว ${passedCount}/6 คน`;
+
+  if(passed[myId]){
+    el("quizQuestion").textContent = "✅ คุณตอบถูกแล้ว";
+    el("quizChoices").innerHTML = "";
+    el("quizMsg").textContent = passedCount < 6 ? "รอเพื่อนในทีมตอบให้ถูกครบทุกคน..." : "TEAMWORK COMPLETE!";
+    return;
+  }
+
+  const seat = me.seat || 1;
+  const q = teamworkQuestions[(seat-1) % teamworkQuestions.length];
+  el("quizQuestion").textContent = q.q;
+  el("quizMsg").textContent = "";
+
+  const order = q.a.map((text,i)=>({text,i})).sort(()=>Math.random()-.5);
+  el("quizChoices").innerHTML = "";
+  order.forEach(choice=>{
+    const b=document.createElement("button");
+    b.className="secondary";
+    b.textContent=choice.text;
+    b.onclick=()=>answerQuiz(choice.i===q.correct);
+    el("quizChoices").appendChild(b);
   });
+}
+
+async function answerQuiz(correct){
+  if(!correct){
+    el("quizMsg").textContent = "❌ ยังไม่ถูก ลองตอบใหม่อีกครั้ง";
+    return;
+  }
+
+  el("quizMsg").textContent = "✅ ถูกต้อง! รอเพื่อนในทีม";
+  await set(ref(db, `rooms/${roomCode}/quizPassed/${myId}`), true);
+
+  const snap=await get(ref(db, `rooms/${roomCode}/quizPassed`));
+  const passed=snap.exists()?snap.val():{};
+  if(Object.keys(passed).filter(id=>passed[id]===true).length>=6){
+    await update(ref(db,"rooms/"+roomCode),{
+      status:"prompt",
+      roundStartedAt:Date.now()
+    });
+  }
 }
 
 function renderPromptForSeat1(){
@@ -616,7 +734,7 @@ function renderDrawingTurn(turn){
 
   clearInterval(activeDrawTimer);
 
-  let left = 15;
+  let left = 20;
   el("drawTimer").textContent = left;
 
   activeDrawTimer = setInterval(async ()=>{
@@ -666,7 +784,7 @@ function renderAnswer(){
 
   clearInterval(activeAnswerTimer);
 
-  let left = 20;
+  let left = 30;
   el("answerTimer").textContent = left;
 
   activeAnswerTimer = setInterval(()=>{
@@ -725,6 +843,7 @@ async function playAgain(){
   await update(ref(db, "rooms/" + roomCode), {
     status: "lobby",
     promptId: null,
+    quizPassed: null,
     turn: null,
     drawings: null,
     roundStartedAt: null,
