@@ -1,20 +1,224 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NRT TEAMWORK BATTLE</title>
-<style>body{margin:0;background:#07151c;color:white;font-family:Arial,Tahoma}main{max-width:600px;margin:auto;padding:16px}h1{text-align:center;color:#ffc928}.card{background:#15303b;padding:18px;border-radius:18px;margin:12px 0}button,input{width:100%;padding:14px;margin:6px 0;border:0;border-radius:12px;font-size:18px}button{background:#168442;color:white;font-weight:bold}.hide{display:none}.stats{display:flex;gap:8px}.stats div{flex:1;background:#091a22;padding:10px;text-align:center;border-radius:10px}.arena{height:360px;position:relative;overflow:hidden;background:#29434d;border-radius:16px}.p{position:absolute;bottom:10px;font-size:50px}.o{position:absolute;font-size:38px}.ctrl{display:flex;gap:8px}.q button{background:#294d5b;text-align:left}.boss{text-align:center;font-size:90px}.bar{height:25px;background:#333;border-radius:20px;overflow:hidden}.hp{height:100%;background:#d84231}.msg{text-align:center;color:#ffd42b;font-weight:bold;min-height:28px}</style>
-<main><h1>⚡ NRT TEAMWORK BATTLE</h1><p style="text-align:center">กู้โรงงาน • แข่งคะแนน • TEAMWORK</p>
-<section id="s" class="card"><div style="font-size:60px;text-align:center">🏭🏃</div><p>วิ่งเก็บอุปกรณ์ → เจอสถานการณ์ → ซ่อมเครื่อง → BOSS</p><input id="n" placeholder="ชื่อผู้เล่น"><button onclick="start()">▶ เริ่มเกม</button></section>
-<section id="g" class="hide"><div class="stats"><div>คะแนน<br><b id="sc">0</b></div><div>COMBO<br><b id="co">x0</b></div><div>ด่าน<br><b id="st">1</b></div></div><div id="m" class="msg"></div><div id="c"></div></section>
-<section id="e" class="card hide" style="text-align:center"><div style="font-size:60px">🏆</div><h1>MISSION COMPLETE!</h1><h2 id="fin"></h2><p>ร่วมมือ • ช่วยเหลือ • สื่อสาร • ไม่โทษกัน</p><button onclick="location.reload()">เล่นอีกครั้ง</button></section></main>
-<script>
-var score=0,combo=0,x=45,got=0,spawn;
-function u(){sc.textContent=score;co.textContent="x"+combo}
-function start(){s.className="hide";g.className="";run()}
-function move(d){x=Math.max(0,Math.min(88,x+d*18));document.getElementById("p").style.left=x+"%"}
-function run(){st.textContent="1";c.innerHTML='<div class="card"><h3>🏃 วิ่งเก็บ 🔧 ⭐ และหลบ 📦</h3><div id="a" class="arena"><div id="p" class="p">🏃</div></div><div class="ctrl"><button onclick="move(-1)">⬅️</button><button onclick="move(1)">➡️</button></div></div>';p.style.left=x+"%";spawn=setInterval(function(){var good=Math.random()<.72,o=document.createElement("div");o.className="o";o.textContent=good?(Math.random()<.5?"🔧":"⭐"):"📦";o.style.left=Math.random()*88+"%";o.style.top="0";a.appendChild(o);var y=0,t=setInterval(function(){y+=14;o.style.top=y+"px";if(y>290){if(Math.abs(parseFloat(o.style.left)-parseFloat(p.style.left))<13){if(good){got++;combo++;score+=100+combo*10;m.textContent="🔥 COMBO x"+combo}else{combo=0;score=Math.max(0,score-100);m.textContent="💥 หลบให้ดี!"}u()}o.remove();clearInterval(t);if(got>=7){clearInterval(spawn);quiz()}},75)},650)}
-function quiz(){st.textContent="2";c.innerHTML='<div class="card q"><h2>🚨 เพื่อนต่างแผนกต้องการความช่วยเหลือ!</h2><p>คุณจะทำอย่างไร?</p><button onclick="ans(1)">🤝 เข้าไปช่วยและประสานทีม</button><button onclick="ans(0)">👉 บอกว่าไม่ใช่งานเรา</button><button onclick="ans(0)">🏃 เดินผ่านไป</button></div>'}
-function ans(ok){if(ok){score+=500;m.textContent="✅ TEAMWORK +500"}else{score=Math.max(0,score-150);m.textContent="❌ ไม่โยนปัญหาให้กัน"}u();setTimeout(repair,600)}
-function repair(){st.textContent="3";window.pos=0;c.innerHTML='<div class="card"><h2>🔧 ซ่อมเครื่องจักร</h2><p>กดตามลำดับ 💬 → 🤝 → 🔧 → ✅</p><button onclick="part(this,0)">💬 สื่อสาร</button><button onclick="part(this,1)">🤝 ขอความช่วยเหลือ</button><button onclick="part(this,2)">🔧 ซ่อม</button><button onclick="part(this,3)">✅ ตรวจสอบ</button></div>'}
-function part(b,i){if(i===pos){pos++;score+=200;b.disabled=true;m.textContent="PERFECT! "+pos+"/4"}else{score=Math.max(0,score-100);m.textContent="ผิดลำดับ!"}u();if(pos===4)setTimeout(boss,500)}
-function boss(){st.textContent="BOSS";window.hp=100;c.innerHTML='<div class="card"><h2>🤖 BOSS BATTLE!</h2><div class="boss">🤖</div><div class="bar"><div id="h" class="hp" style="width:100%"></div></div><p>รวมพลังให้เครื่องจักรกลับมาทำงาน!</p><button id="hit" onclick="attack()">🤝 รวมพลัง!</button></div>'}
-function attack(){hp-=10;score+=100;h.style.width=hp+"%";m.textContent="🔥 TEAM POWER!";u();if(hp<=0){hit.disabled=true;score+=1000;setTimeout(done,500)}}
-function done(){g.className="hide";e.className="card";fin.textContent=(n.value||"NRT Player")+" — "+score+" คะแนน"}u()
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>NRT TEAMWORK DRAW - 20 Room Competition</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0a1820;color:#fff;font-family:Tahoma,Arial,sans-serif}main{max-width:700px;margin:auto;min-height:100vh;padding:14px}h1,h2,h3{margin:8px 0}h1{text-align:center;color:#ffd12a}.sub{text-align:center;color:#cfe4ec;margin-bottom:12px}.card{background:#17313d;border:1px solid #476977;border-radius:18px;padding:18px;margin:12px 0;box-shadow:0 10px 30px #0004}button,input,select{width:100%;border:0;border-radius:12px;padding:14px;margin:6px 0;font-size:17px}button{background:#168347;color:#fff;font-weight:800;cursor:pointer}button.secondary{background:#2f5968}button.danger{background:#8d2d2a}button.gold{background:#a97d0c}button:disabled{opacity:.45;cursor:not-allowed}.hidden{display:none!important}.big{text-align:center;font-size:58px}.status{min-height:28px;text-align:center;color:#ffd12a;font-weight:800}.room-code{text-align:center;font-size:38px;color:#ffd12a;font-weight:900;letter-spacing:3px}.player{display:flex;justify-content:space-between;align-items:center;background:#10252e;padding:11px 12px;border-radius:12px;margin:6px 0}.player.me{outline:2px solid #ffd12a}.host{color:#ffd12a}.timer{text-align:center;font-size:44px;font-weight:900;color:#ffd12a}.animal-card{background:linear-gradient(145deg,#fff8d7,#f5ead0);border-radius:22px;padding:18px;text-align:center;color:#17242b}.animal-emoji{font-size:120px;line-height:1.15;filter:drop-shadow(0 8px 8px #0002)}.reference-box{background:#0f242d;border-radius:16px;padding:12px;margin:10px 0}.reference-box img{width:100%;max-height:260px;object-fit:contain;background:#fff;border-radius:14px}canvas{display:block;width:100%;height:430px;background:#fff;border-radius:18px;touch-action:none;box-shadow:0 10px 30px #0005}.wait-icon{font-size:70px;text-align:center}.note{text-align:center;font-size:13px;color:#bfd1d8}.quiz-choice{text-align:left;background:#2f5968}.answer-box{font-size:20px;text-align:center}.leader-row{background:#10252e;border-radius:14px;padding:12px;margin:8px 0}.leader-top{display:flex;gap:10px;align-items:center;justify-content:space-between}.rank{font-size:25px;font-weight:900;color:#ffd12a}.names{color:#d9edf5;line-height:1.5}.result-grid{display:grid;grid-template-columns:1fr;gap:12px}.result-item{background:#10252e;border-radius:14px;padding:10px}.result-item img{width:100%;max-height:280px;object-fit:contain;background:#fff;border-radius:12px}.result-original{background:linear-gradient(145deg,#fff8d7,#f5ead0);color:#17242b;border-radius:14px;padding:12px;text-align:center}.result-original .animal-emoji{font-size:100px}.top-actions{display:flex;gap:8px}.top-actions button{flex:1}.ok{color:#8df59f}.bad{color:#ff8d84}
+</style>
+</head>
+<body>
+<main>
+<h1>🐾 NRT TEAMWORK DRAW</h1>
+<div class="sub">20 ห้อง • ห้องละ 6 คน • TEAMWORK QUIZ • Animal Relay • Leaderboard</div>
+
+<section id="homeScreen" class="card">
+  <div class="big">🏭🤝🐘</div>
+  <input id="playerName" placeholder="ชื่อผู้เล่น">
+  <select id="fixedRoom"></select>
+  <button id="joinFixedRoomBtn">🚪 เข้าห้อง</button>
+  <button id="leaderboardBtn" class="gold">🏆 ดู Leaderboard</button>
+  <div id="homeMsg" class="status"></div>
+</section>
+
+<section id="lobbyScreen" class="card hidden">
+  <h2 style="text-align:center">ห้องของทีม</h2>
+  <div id="roomCodeText" class="room-code"></div>
+  <div id="playerList"></div>
+  <div id="lobbyMsg" class="status"></div>
+  <button id="startGameBtn" class="hidden">▶ เริ่ม TEAMWORK QUIZ</button>
+  <button id="leaveRoomBtn" class="danger">ออกจากห้อง</button>
+</section>
+
+<section id="quizScreen" class="card hidden">
+  <div class="big">🧠🤝</div>
+  <h2 style="text-align:center">TEAMWORK QUIZ</h2>
+  <div id="quizProgress" class="status"></div>
+  <h3 id="quizQuestion" style="line-height:1.5"></h3>
+  <div id="quizChoices"></div>
+  <div id="quizMsg" class="status"></div>
+</section>
+
+<section id="promptScreen" class="card hidden">
+  <h2 style="text-align:center">👀 คนที่ 1 ดูภาพต้นฉบับ</h2>
+  <div class="animal-card"><div id="promptEmoji" class="animal-emoji"></div></div>
+  <div class="timer"><span id="promptTimer">5</span></div>
+  <div class="status">จำภาพให้ดี! คนอื่นจะไม่เห็นภาพนี้</div>
+</section>
+
+<section id="waitScreen" class="card hidden">
+  <div class="wait-icon">⏳</div>
+  <h2 id="waitTitle" style="text-align:center"></h2>
+  <div id="waitMsg" class="status"></div>
+</section>
+
+<section id="drawScreen" class="hidden">
+  <div class="card">
+    <h2 id="drawTitle" style="text-align:center"></h2>
+    <div id="previousReference" class="reference-box hidden">
+      <div class="note">ดูเฉพาะภาพจากคนก่อน แล้ววาดใหม่บนพื้นที่สีขาว</div>
+      <img id="previousImage" alt="ภาพจากคนก่อน">
+    </div>
+    <div class="timer">⏱ <span id="drawTimer">20</span></div>
+    <div id="drawMsg" class="status">หมดเวลาแล้วระบบจะส่งอัตโนมัติ</div>
+  </div>
+  <canvas id="drawCanvas"></canvas>
+  <div class="note">ไม่มีปุ่มล้าง / Undo / ส่ง — วาดให้ดีที่สุดภายใน 20 วินาที</div>
+</section>
+
+<section id="answerScreen" class="card hidden">
+  <h2 style="text-align:center">⌨️ คนที่ 6 ทายภาพ!</h2>
+  <div class="reference-box"><img id="answerImage" alt="ภาพจากคนที่ 5"></div>
+  <div class="timer">⏱ <span id="answerTimer">30</span></div>
+  <div class="answer-box">พิมพ์ชื่อสัตว์ให้ถูกก่อนเวลา 0</div>
+  <input id="answerInput" autocomplete="off" placeholder="พิมพ์คำตอบ เช่น ช้าง">
+  <button id="submitAnswerBtn">✅ ส่งคำตอบ</button>
+  <div id="answerMsg" class="status"></div>
+</section>
+
+<section id="resultsScreen" class="card hidden">
+  <div class="big">😂🏆</div>
+  <h1>เฉลย!</h1>
+  <div id="roomResultText" class="status"></div>
+  <div id="resultsGallery" class="result-grid"></div>
+  <div class="top-actions">
+    <button id="resultsLeaderboardBtn" class="gold">🏆 Leaderboard</button>
+    <button id="backLobbyBtn" class="hidden">กลับห้อง</button>
+  </div>
+</section>
+
+<section id="leaderboardScreen" class="card hidden">
+  <div class="big">🏆</div>
+  <h1>LEADERBOARD</h1>
+  <div class="note">เรียงทีมที่ตอบถูกเร็วที่สุด</div>
+  <div id="leaderboardList"></div>
+  <button id="leaderBackBtn" class="secondary">← กลับ</button>
+</section>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC4wbNF3-dE_YtdCBC4XmCzvuP7IBZ-kxQ",
+  authDomain: "nrt-teamwork-game.firebaseapp.com",
+  databaseURL: "https://nrt-teamwork-game-default-rtdb.firebaseio.com",
+  projectId: "nrt-teamwork-game",
+  storageBucket: "nrt-teamwork-game.firebasestorage.app",
+  messagingSenderId: "216090591382",
+  appId: "1:216090591382:web:73ad2766eba3a5b6bd7ab7"
+};
+const app=initializeApp(firebaseConfig); const db=getDatabase(app);
+
+const FIXED_ROOMS=Array.from({length:20},(_,i)=>`TEAM${String(i+1).padStart(2,"0")}`);
+const animals=[
+{id:"elephant",emoji:"🐘",name:"ช้าง",aliases:["ช้าง"]},{id:"giraffe",emoji:"🦒",name:"ยีราฟ",aliases:["ยีราฟ","ยีราฟฟ์"]},
+{id:"lion",emoji:"🦁",name:"สิงโต",aliases:["สิงโต"]},{id:"tiger",emoji:"🐯",name:"เสือ",aliases:["เสือ","เสือโคร่ง"]},
+{id:"panda",emoji:"🐼",name:"แพนด้า",aliases:["แพนด้า","หมีแพนด้า"]},{id:"monkey",emoji:"🐵",name:"ลิง",aliases:["ลิง"]},
+{id:"dog",emoji:"🐶",name:"สุนัข",aliases:["สุนัข","หมา"]},{id:"cat",emoji:"🐱",name:"แมว",aliases:["แมว"]},
+{id:"rabbit",emoji:"🐰",name:"กระต่าย",aliases:["กระต่าย"]},{id:"pig",emoji:"🐷",name:"หมู",aliases:["หมู"]},
+{id:"cow",emoji:"🐮",name:"วัว",aliases:["วัว"]},{id:"horse",emoji:"🐴",name:"ม้า",aliases:["ม้า"]},
+{id:"crocodile",emoji:"🐊",name:"จระเข้",aliases:["จระเข้"]},{id:"turtle",emoji:"🐢",name:"เต่า",aliases:["เต่า"]},
+{id:"penguin",emoji:"🐧",name:"เพนกวิน",aliases:["เพนกวิน","แพนกวิน"]},{id:"chicken",emoji:"🐓",name:"ไก่",aliases:["ไก่"]},
+{id:"octopus",emoji:"🐙",name:"ปลาหมึก",aliases:["ปลาหมึก","หมึก"]},{id:"crab",emoji:"🦀",name:"ปู",aliases:["ปู"]},
+{id:"butterfly",emoji:"🦋",name:"ผีเสื้อ",aliases:["ผีเสื้อ"]},{id:"frog",emoji:"🐸",name:"กบ",aliases:["กบ"]}
+];
+// Fixed one-to-one mapping guarantees 20 rooms never share an animal.
+const roomAnimal=Object.fromEntries(FIXED_ROOMS.map((r,i)=>[r,animals[i].id]));
+
+const teamworkQuestions=[
+{q:"เพื่อนต่างแผนกมีงานเร่งและงานของเราทำเสร็จแล้ว ควรทำอย่างไร?",a:["เข้าไปช่วยและประสานงานกัน","บอกว่าไม่ใช่งานของเรา","ปล่อยให้เพื่อนจัดการเอง"],correct:0},
+{q:"เมื่อเกิดปัญหาในทีม สิ่งใดเหมาะสมที่สุด?",a:["ช่วยกันหาสาเหตุและทางแก้","รีบหาว่าใครผิด","ไม่พูดถึงปัญหา"],correct:0},
+{q:"การทำงานร่วมกันอย่างสามัคคีหมายถึงข้อใด?",a:["ร่วมมือและรับฟังกัน","ต่างคนต่างทำโดยไม่สื่อสาร","แข่งขันกันเองในทีม"],correct:0},
+{q:"ถ้าเพื่อนทำผิดพลาด เราควรทำอย่างไร?",a:["ช่วยกันแก้และเรียนรู้ร่วมกัน","ตำหนิต่อหน้าทุกคน","โยนความรับผิดชอบให้เพื่อน"],correct:0},
+{q:"ทีมอื่นขอข้อมูลที่จำเป็นต่อการแก้ปัญหา เราควรทำอย่างไร?",a:["ให้ข้อมูลและช่วยประสานงาน","เก็บข้อมูลไว้กับทีมเรา","ให้เขาไปหาเอง"],correct:0},
+{q:"ข้อใดตรงกับค่านิยมไม่โทษกันไปมา?",a:["มองปัญหาและแก้ร่วมกัน","หาคนรับผิดก่อนเสมอ","บอกว่าเป็นความผิดอีกแผนก"],correct:0}
+];
+
+const screens=["homeScreen","lobbyScreen","quizScreen","promptScreen","waitScreen","drawScreen","answerScreen","resultsScreen","leaderboardScreen"];
+const el=id=>document.getElementById(id);
+let roomCode="",roomData=null,unsubscribeRoom=null,previousScreen="homeScreen";
+let myId=localStorage.getItem("nrt_comp_uid")||crypto.randomUUID(); localStorage.setItem("nrt_comp_uid",myId);
+let myName="",promptTimer=null,drawTimer=null,answerTimer=null,currentKey="";
+let drawing=false,lastX=0,lastY=0;
+
+function showScreen(id){screens.forEach(s=>el(s).classList.add("hidden"));el(id).classList.remove("hidden");previousScreen=id}
+function getPlayers(data){return data?.players?Object.values(data.players).sort((a,b)=>a.seat-b.seat):[]}
+function getMe(){return roomData?.players?.[myId]||null}
+function animalById(id){return animals.find(a=>a.id===id)||animals[0]}
+function stopTimers(){clearInterval(promptTimer);clearInterval(drawTimer);clearInterval(answerTimer)}
+function escapeHtml(text){return String(text).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function normalizeAnswer(v){return String(v||"").trim().toLowerCase().replace(/\s+/g,"").replace(/[ๆฯ.!?,]/g,"")}
+function isCorrectAnswer(v,animal){const n=normalizeAnswer(v);return animal.aliases.some(a=>normalizeAnswer(a)===n)}
+
+function initRoomSelect(){el("fixedRoom").innerHTML='<option value="">เลือกห้อง TEAM01–TEAM20</option>'+FIXED_ROOMS.map(r=>`<option value="${r}">${r}</option>`).join("")}
+
+async function joinFixedRoom(){
+ myName=el("playerName").value.trim();roomCode=el("fixedRoom").value;
+ if(!myName||!FIXED_ROOMS.includes(roomCode)){el("homeMsg").textContent="กรุณาใส่ชื่อและเลือกห้อง";return}
+ el("homeMsg").textContent="กำลังเข้าห้อง...";
+ try{
+   const roomRef=ref(db,"rooms/"+roomCode);const snap=await get(roomRef);let data=snap.exists()?snap.val():null;
+   if(!data){data={status:"lobby",hostId:myId,promptId:roomAnimal[roomCode],players:{}};await set(roomRef,data)}
+   const players=getPlayers(data);const existing=data.players?.[myId];
+   if(!existing&&players.length>=6){el("homeMsg").textContent="ห้องนี้เต็ม 6 คนแล้ว";return}
+   if(!existing&&data.status!=="lobby"){el("homeMsg").textContent="ห้องนี้เริ่มเกมแล้ว";return}
+   if(!existing){const seat=Math.max(0,...players.map(p=>p.seat))+1;await set(ref(db,`rooms/${roomCode}/players/${myId}`),{id:myId,name:myName,seat,host:seat===1});if(seat===1)await update(roomRef,{hostId:myId})}
+   watchRoom();
+ }catch(err){el("homeMsg").textContent="เข้าห้องไม่สำเร็จ: "+err.message}
+}
+
+function watchRoom(){if(unsubscribeRoom)unsubscribeRoom();unsubscribeRoom=onValue(ref(db,"rooms/"+roomCode),snap=>{if(!snap.exists()){stopTimers();roomData=null;showScreen("homeScreen");el("homeMsg").textContent="ห้องถูกลบ";return}roomData=snap.val();renderState()},err=>{showScreen("homeScreen");el("homeMsg").textContent="Firebase error: "+err.message})}
+
+function renderState(){const me=getMe();if(!me)return;
+ if(roomData.status==="lobby")return renderLobby();
+ if(roomData.status==="quiz")return renderQuiz();
+ if(roomData.status==="prompt"){if(me.seat===1)return renderPrompt();return showWaiting("คนที่ 1 กำลังดูภาพต้นฉบับ","คุณจะไม่เห็นภาพต้นฉบับ")}
+ if(roomData.status==="drawing"){const turn=Number(roomData.turn||1);if(me.seat===turn&&turn<=5)return renderDrawing(turn);return showWaiting(`กำลังวาดต่อ: คนที่ ${turn}/5`,`คุณคือผู้เล่นคนที่ ${me.seat}`)}
+ if(roomData.status==="answer"){if(me.seat===6)return renderTypedAnswer();return showWaiting("คนที่ 6 กำลังพิมพ์คำตอบ","รอผลและดูอันดับพร้อมกัน")}
+ if(roomData.status==="results")return renderResults();
+}
+
+function renderLobby(){stopTimers();currentKey="";showScreen("lobbyScreen");const players=getPlayers(roomData),me=getMe();el("roomCodeText").textContent=roomCode;el("playerList").innerHTML=players.map(p=>`<div class="player ${p.id===myId?"me":""}"><span>${p.seat}. ${escapeHtml(p.name)}</span><span class="${p.host?"host":""}">${p.host?"👑 HOST":""}</span></div>`).join("");el("lobbyMsg").textContent=`ผู้เล่น ${players.length}/6 • โจทย์ของห้องนี้ไม่ซ้ำห้องอื่น`;
+ if(me.host){el("startGameBtn").classList.remove("hidden");el("startGameBtn").disabled=players.length!==6;el("startGameBtn").textContent=players.length===6?"▶ เริ่ม TEAMWORK QUIZ":"รอผู้เล่นให้ครบ 6 คน"}else el("startGameBtn").classList.add("hidden")}
+
+async function startGame(){if(getPlayers(roomData).length!==6)return;await update(ref(db,"rooms/"+roomCode),{status:"quiz",quizPassed:null,drawings:null,result:null,answerStartedAt:null,roundStartedAt:Date.now()})}
+
+function renderQuiz(){stopTimers();showScreen("quizScreen");const me=getMe(),passed=roomData.quizPassed||{},count=Object.values(passed).filter(Boolean).length;el("quizProgress").textContent=`ผ่านแล้ว ${count}/6 คน`;
+ if(passed[myId]){el("quizQuestion").textContent="✅ คุณตอบถูกแล้ว";el("quizChoices").innerHTML="";el("quizMsg").textContent="รอเพื่อนตอบให้ถูกครบทุกคน...";return}
+ const q=teamworkQuestions[(me.seat-1)%teamworkQuestions.length];el("quizQuestion").textContent=q.q;el("quizMsg").textContent="";el("quizChoices").innerHTML="";
+ q.a.map((text,i)=>({text,i})).sort(()=>Math.random()-.5).forEach(c=>{const b=document.createElement("button");b.className="quiz-choice";b.textContent=c.text;b.onclick=()=>answerQuiz(c.i===q.correct);el("quizChoices").appendChild(b)})}
+async function answerQuiz(correct){if(!correct){el("quizMsg").innerHTML='<span class="bad">❌ ยังไม่ถูก ลองตอบใหม่</span>';return}await set(ref(db,`rooms/${roomCode}/quizPassed/${myId}`),true);const snap=await get(ref(db,`rooms/${roomCode}/quizPassed`));const passed=snap.exists()?snap.val():{};if(Object.values(passed).filter(Boolean).length>=6)await update(ref(db,"rooms/"+roomCode),{status:"prompt",roundStartedAt:Date.now()})}
+
+function renderPrompt(){const key=`prompt:${roomData.roundStartedAt}`;showScreen("promptScreen");el("promptEmoji").textContent=animalById(roomData.promptId).emoji;if(currentKey===key)return;currentKey=key;clearInterval(promptTimer);let left=5;el("promptTimer").textContent=left;promptTimer=setInterval(async()=>{left--;el("promptTimer").textContent=Math.max(0,left);if(left<=0){clearInterval(promptTimer);await update(ref(db,"rooms/"+roomCode),{status:"drawing",turn:1,turnStartedAt:Date.now()})}},1000)}
+function showWaiting(title,msg){stopTimers();showScreen("waitScreen");el("waitTitle").textContent=title;el("waitMsg").textContent=msg}
+
+function setupCanvas(){const cv=el("drawCanvas"),ratio=window.devicePixelRatio||1,rect=cv.getBoundingClientRect();cv.width=Math.floor(rect.width*ratio);cv.height=Math.floor(430*ratio);const ctx=cv.getContext("2d");ctx.setTransform(ratio,0,0,ratio,0,0);ctx.fillStyle="#fff";ctx.fillRect(0,0,rect.width,430);ctx.lineWidth=7;ctx.lineCap="round";ctx.lineJoin="round";ctx.strokeStyle="#111"}
+function renderDrawing(turn){const key=`draw:${roomData.roundStartedAt}:${turn}`;showScreen("drawScreen");el("drawTitle").textContent=`✏️ คนวาด ${turn}/5`;if(turn===1){el("previousReference").classList.add("hidden");el("drawMsg").textContent="วาดจากภาพที่จำไว้ • ส่งอัตโนมัติเมื่อหมดเวลา"}else{el("previousReference").classList.remove("hidden");el("previousImage").src=roomData.drawings?.[String(turn-1)]||"";el("drawMsg").textContent="ดูภาพคนก่อน แล้ววาดใหม่ • ส่งอัตโนมัติ"}if(currentKey===key)return;currentKey=key;setupCanvas();clearInterval(drawTimer);const started=Number(roomData.turnStartedAt)||Date.now();function tick(){const elapsed=Math.floor((Date.now()-started)/1000),left=Math.max(0,20-elapsed);el("drawTimer").textContent=String(left);if(left<=0){clearInterval(drawTimer);autoSubmitDrawing(turn)}}tick();drawTimer=setInterval(tick,250)}
+async function autoSubmitDrawing(turn){if(el("drawMsg").dataset.sent==="1")return;el("drawMsg").dataset.sent="1";const image=el("drawCanvas").toDataURL("image/jpeg",.55),updates={};updates[`drawings/${turn}`]=image;if(turn<5){updates.turn=turn+1;updates.turnStartedAt=Date.now()}else{updates.status="answer";updates.turn=6;updates.answerStartedAt=Date.now()}await update(ref(db,"rooms/"+roomCode),updates);el("drawMsg").dataset.sent="0"}
+
+function renderTypedAnswer(){const key=`answer:${roomData.answerStartedAt}`;showScreen("answerScreen");el("answerImage").src=roomData.drawings?.["5"]||"";if(currentKey===key)return;currentKey=key;el("answerInput").value="";el("answerMsg").textContent="";el("submitAnswerBtn").disabled=false;clearInterval(answerTimer);const started=Number(roomData.answerStartedAt)||Date.now();function tick(){const elapsed=Math.floor((Date.now()-started)/1000),left=Math.max(0,30-elapsed);el("answerTimer").textContent=String(left);if(left<=0){clearInterval(answerTimer);el("submitAnswerBtn").disabled=true;el("answerInput").disabled=true;el("answerMsg").textContent="⏰ หมดเวลา 30 วินาที"}}tick();answerTimer=setInterval(tick,250)}
+
+async function submitTypedAnswer(){if(!roomData||roomData.status!=="answer")return;const started=Number(roomData.answerStartedAt)||Date.now(),elapsedMs=Date.now()-started;if(elapsedMs>30000){el("answerMsg").textContent="⏰ หมดเวลาแล้ว";return}const animal=animalById(roomData.promptId),value=el("answerInput").value;if(!isCorrectAnswer(value,animal)){el("answerMsg").innerHTML='<span class="bad">❌ ยังไม่ถูก ลองใหม่เร็ว!</span>';el("answerInput").focus();return}
+ const elapsedSec=Math.round(elapsedMs/100)/10,players=getPlayers(roomData),names=players.map(p=>p.name);const result={roomCode,players:names,answer:animal.name,elapsedSec,correctAt:Date.now(),promptId:animal.id};await set(ref(db,"leaderboard/"+roomCode),result);await update(ref(db,"rooms/"+roomCode),{status:"results",result});}
+
+function renderResults(){stopTimers();showScreen("resultsScreen");const animal=animalById(roomData.promptId),drawings=roomData.drawings||{},result=roomData.result;el("roomResultText").textContent=result?`✅ ${roomCode} ตอบถูก ${result.answer} ใน ${result.elapsedSec.toFixed(1)} วินาที`:"จบรอบ";let html=`<div class="result-item"><h3>🖼️ ภาพต้นฉบับ — ${animal.name}</h3><div class="result-original"><div class="animal-emoji">${animal.emoji}</div></div></div>`;for(let i=1;i<=5;i++)html+=`<div class="result-item"><h3>✏️ ภาพคนที่ ${i}</h3><img src="${drawings[String(i)]||""}" alt="ภาพคนที่ ${i}"></div>`;el("resultsGallery").innerHTML=html;if(getMe()?.host)el("backLobbyBtn").classList.remove("hidden");else el("backLobbyBtn").classList.add("hidden")}
+
+async function showLeaderboard(){stopTimers();showScreen("leaderboardScreen");el("leaderboardList").innerHTML='<div class="status">กำลังโหลด...</div>';const snap=await get(ref(db,"leaderboard"));const rows=snap.exists()?Object.values(snap.val()):[];rows.sort((a,b)=>Number(a.elapsedSec)-Number(b.elapsedSec));if(!rows.length){el("leaderboardList").innerHTML='<div class="status">ยังไม่มีทีมตอบถูก</div>';return}el("leaderboardList").innerHTML=rows.map((r,i)=>`<div class="leader-row"><div class="leader-top"><span class="rank">${i+1}. ${escapeHtml(r.roomCode)}</span><b>${Number(r.elapsedSec).toFixed(1)} วิ</b></div><div>🎯 ${escapeHtml(r.answer)}</div><div class="names">👥 ${(r.players||[]).map(escapeHtml).join(" • ")}</div></div>`).join("")}
+
+async function backToLobby(){if(!getMe()?.host)return;await update(ref(db,"rooms/"+roomCode),{status:"lobby",quizPassed:null,drawings:null,result:null,turn:null,turnStartedAt:null,answerStartedAt:null,roundStartedAt:null})}
+async function leaveRoom(){if(!roomCode||!roomData)return;await remove(ref(db,`rooms/${roomCode}/players/${myId}`));if(roomData.hostId===myId){const remaining=getPlayers(roomData).filter(p=>p.id!==myId);if(remaining.length){const next=remaining[0];await update(ref(db,"rooms/"+roomCode),{hostId:next.id});await update(ref(db,`rooms/${roomCode}/players/${next.id}`),{host:true})}}if(unsubscribeRoom)unsubscribeRoom();stopTimers();roomCode="";roomData=null;showScreen("homeScreen")}
+
+function canvasPos(ev){const r=el("drawCanvas").getBoundingClientRect(),p=ev.touches?ev.touches[0]:ev;return{x:p.clientX-r.left,y:p.clientY-r.top}}
+function pointerDown(ev){if(el("drawScreen").classList.contains("hidden"))return;ev.preventDefault();drawing=true;const p=canvasPos(ev);lastX=p.x;lastY=p.y}
+function pointerMove(ev){if(!drawing)return;ev.preventDefault();const p=canvasPos(ev),ctx=el("drawCanvas").getContext("2d");ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(p.x,p.y);ctx.stroke();lastX=p.x;lastY=p.y}
+function pointerUp(){drawing=false}
+
+initRoomSelect();
+el("joinFixedRoomBtn").onclick=joinFixedRoom;el("startGameBtn").onclick=startGame;el("leaveRoomBtn").onclick=leaveRoom;el("submitAnswerBtn").onclick=submitTypedAnswer;el("answerInput").addEventListener("keydown",e=>{if(e.key==="Enter")submitTypedAnswer()});el("leaderboardBtn").onclick=showLeaderboard;el("resultsLeaderboardBtn").onclick=showLeaderboard;el("leaderBackBtn").onclick=()=>{if(roomData)renderState();else showScreen("homeScreen")};el("backLobbyBtn").onclick=backToLobby;
+const cv=el("drawCanvas");cv.addEventListener("mousedown",pointerDown);cv.addEventListener("mousemove",pointerMove);cv.addEventListener("mouseup",pointerUp);cv.addEventListener("mouseleave",pointerUp);cv.addEventListener("touchstart",pointerDown,{passive:false});cv.addEventListener("touchmove",pointerMove,{passive:false});cv.addEventListener("touchend",pointerUp);
 </script>
+</body>
+</html>
