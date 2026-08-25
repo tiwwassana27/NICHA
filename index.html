@@ -41,33 +41,42 @@ function players(d=data){return Object.values(d?.players||{}).sort((a,b)=>a.seat
 function me(){return data?.players?.[uid]}
 function stop(){clearInterval(timer);timer=null}
 for(let i=1;i<=20;i++){let o=document.createElement("option");o.value=`TEAM${String(i).padStart(2,"0")}`;o.textContent=`TEAM${String(i).padStart(2,"0")}`;$("room").appendChild(o)}
+function normalizePlayers(current){
+ const cur=current||{};
+ const rows=Object.entries(cur)
+   .map(([id,p])=>[id,{...p}])
+   .sort((a,b)=>{
+     const aj=Number(a[1].joinedAt||0), bj=Number(b[1].joinedAt||0);
+     if(aj!==bj)return aj-bj;
+     return Number(a[1].seat||99)-Number(b[1].seat||99);
+   });
+ const out={};
+ rows.slice(0,6).forEach(([id,p],idx)=>{
+   out[id]={...p,seat:idx+1,host:idx===0};
+ });
+ return out;
+}
 async function join(){
  myName=$("name").value.trim();code=$("room").value;if(!myName)return $("homeMsg").textContent="กรุณาใส่ชื่อ";
- let existing=await get(ref(db,`rooms/${code}/players/${uid}`));
- if(existing.exists()){watch();return}
-
  try{
-   // จอง "เลขที่ว่างต่ำสุด" ใน transaction เดียวกัน
-   // ถ้าคนที่ 1 ออก เลข 1 จะกลับมาให้คนใหม่ใช้ได้ทันที
    const playersRef=ref(db,`rooms/${code}/players`);
    const result=await runTransaction(playersRef,current=>{
-     const cur=current||{};
-     if(cur[uid])return cur;
+     let cur=normalizePlayers(current);
 
-     const used=new Set(Object.values(cur).map(p=>Number(p.seat)).filter(n=>n>=1&&n<=6));
-     let seat=0;
-     for(let n=1;n<=6;n++){if(!used.has(n)){seat=n;break}}
-     if(!seat)return; // ห้องเต็มจริง 6 ที่นั่ง
+     // ผู้เล่นเดิมกลับเข้าห้อง: ซ่อมเลข 1..N ให้ต่อกันอัตโนมัติ
+     if(cur[uid]){
+       cur[uid]={...cur[uid],name:myName};
+       return normalizePlayers(cur);
+     }
 
-     return {
-       ...cur,
-       [uid]:{id:uid,name:myName,seat,host:seat===1,joinedAt:Date.now()}
-     };
+     if(Object.keys(cur).length>=6)return; // เต็มจริงเฉพาะเมื่อมี 6 คนจริง
+     cur[uid]={id:uid,name:myName,seat:99,host:false,joinedAt:Date.now()};
+     return normalizePlayers(cur);
    });
 
-   if(!result.committed)return $("homeMsg").textContent="ห้องเต็มแล้ว";
+   if(!result.committed)return $("homeMsg").textContent="ห้องเต็มแล้ว (มีผู้เล่นครบ 6 คนจริง)";
 
-   // ไม่ใช้ nextSeat อีกต่อไป เพราะทำให้เลขค้างเมื่อคนออก
+   // ล้างตัวนับเก่าที่อาจค้างจากเวอร์ชันก่อน
    await remove(ref(db,`rooms/${code}/nextSeat`));
 
    let st=await get(ref(db,`rooms/${code}/status`));
@@ -205,7 +214,19 @@ async function resetGame(){
  show("home");
  $("homeMsg").textContent=`✅ ${code} เริ่มใหม่แล้ว กรุณาใส่ชื่อและเข้าห้องใหม่`;
 }
-async function leave(){quizRenderKey="";let m=me();if(m)await remove(ref(db,`rooms/${code}/players/${uid}`));if(unsub)unsub();data=null;code="";show("home")}
+async function leave(){
+ quizRenderKey="";
+ if(me()){
+   const playersRef=ref(db,`rooms/${code}/players`);
+   await runTransaction(playersRef,current=>{
+     const cur={...(current||{})};
+     delete cur[uid];
+     return normalizePlayers(cur);
+   });
+   await remove(ref(db,`rooms/${code}/nextSeat`));
+ }
+ if(unsub)unsub();data=null;code="";show("home");
+}
 function countdown(id,n,done){let started=Date.now();$(id).textContent=n;timer=setInterval(()=>{let l=Math.max(0,n-Math.floor((Date.now()-started)/1000));$(id).textContent=l;if(l<=0){stop();done()}},200)}
 function pos(e){let r=$("canvas").getBoundingClientRect(),p=e.touches?e.touches[0]:e;return{x:p.clientX-r.left,y:p.clientY-r.top}}
 function down(e){if($("draw").classList.contains("hidden"))return;e.preventDefault();drawing=true;let p=pos(e);lx=p.x;ly=p.y}function move(e){if(!drawing)return;e.preventDefault();let p=pos(e),x=$("canvas").getContext("2d");x.beginPath();x.moveTo(lx,ly);x.lineTo(p.x,p.y);x.stroke();lx=p.x;ly=p.y}function up(){drawing=false}
