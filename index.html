@@ -45,15 +45,37 @@ async function join(){
  myName=$("name").value.trim();code=$("room").value;if(!myName)return $("homeMsg").textContent="กรุณาใส่ชื่อ";
  let existing=await get(ref(db,`rooms/${code}/players/${uid}`));
  if(existing.exists()){watch();return}
- // Atomic seat claim: Firebase transaction prevents duplicate seats.
- let seatResult=await runTransaction(ref(db,`rooms/${code}/nextSeat`),cur=>{let n=Number(cur||1);if(n>6)return;return n+1});
- if(!seatResult.committed)return $("homeMsg").textContent="ห้องเต็มแล้ว";
- let seat=Number(seatResult.snapshot.val())-1;
+
  try{
-   await set(ref(db,`rooms/${code}/players/${uid}`),{id:uid,name:myName,seat,host:seat===1,joinedAt:Date.now()});
-   let st=await get(ref(db,`rooms/${code}/status`));if(!st.exists())await set(ref(db,`rooms/${code}/status`),"lobby");
+   // จอง "เลขที่ว่างต่ำสุด" ใน transaction เดียวกัน
+   // ถ้าคนที่ 1 ออก เลข 1 จะกลับมาให้คนใหม่ใช้ได้ทันที
+   const playersRef=ref(db,`rooms/${code}/players`);
+   const result=await runTransaction(playersRef,current=>{
+     const cur=current||{};
+     if(cur[uid])return cur;
+
+     const used=new Set(Object.values(cur).map(p=>Number(p.seat)).filter(n=>n>=1&&n<=6));
+     let seat=0;
+     for(let n=1;n<=6;n++){if(!used.has(n)){seat=n;break}}
+     if(!seat)return; // ห้องเต็มจริง 6 ที่นั่ง
+
+     return {
+       ...cur,
+       [uid]:{id:uid,name:myName,seat,host:seat===1,joinedAt:Date.now()}
+     };
+   });
+
+   if(!result.committed)return $("homeMsg").textContent="ห้องเต็มแล้ว";
+
+   // ไม่ใช้ nextSeat อีกต่อไป เพราะทำให้เลขค้างเมื่อคนออก
+   await remove(ref(db,`rooms/${code}/nextSeat`));
+
+   let st=await get(ref(db,`rooms/${code}/status`));
+   if(!st.exists())await set(ref(db,`rooms/${code}/status`),"lobby");
    watch();
- }catch(e){$("homeMsg").textContent=e.message}
+ }catch(e){
+   $("homeMsg").textContent="เข้าห้องไม่สำเร็จ: "+e.message;
+ }
 }
 function watch(){if(unsub)unsub();unsub=onValue(ref(db,`rooms/${code}`),s=>{if(!s.exists()){show("home");return}data=s.val();render()})}
 function render(){
