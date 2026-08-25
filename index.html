@@ -137,7 +137,22 @@ function renderQuiz(){
    $("choices").appendChild(b);
  });
 }
-async function answerQuiz(ok){if(!ok){$("quizMsg").textContent="❌ ยังไม่ถูก ลองใหม่อีกครั้ง";return}await set(ref(db,`rooms/${code}/quizPassed/${uid}`),true);let s=await get(ref(db,`rooms/${code}/quizPassed`));if(Object.values(s.val()||{}).filter(Boolean).length>=6&&me().seat===1)await beginRound(1)}
+async function answerQuiz(ok){
+ if(!ok){$("quizMsg").textContent="❌ ยังไม่ถูก ลองใหม่อีกครั้ง";return}
+ await set(ref(db,`rooms/${code}/quizPassed/${uid}`),true);
+ let s=await get(ref(db,`rooms/${code}/quizPassed`));
+ if(Object.values(s.val()||{}).filter(Boolean).length>=6)await tryBeginFirstRound();
+}
+async function tryBeginFirstRound(){
+ // คนที่ตอบครบเป็นคนที่ 6 ก็เริ่มรอบได้ ไม่ต้องรอ HOST ตอบซ้ำ
+ // transaction นี้ทำให้มีเพียงเครื่องเดียวที่ได้สิทธิ์เริ่มรอบ
+ const lock=await runTransaction(ref(db,`rooms/${code}/status`),cur=>cur==="quiz"?"starting":undefined);
+ if(!lock.committed)return;
+ try{await beginRound(1)}catch(e){
+   await set(ref(db,`rooms/${code}/status`),"quiz");
+   $("quizMsg").textContent="เริ่มรอบไม่สำเร็จ: "+e.message;
+ }
+}
 async function claimAnimal(){
  // claim one globally unused animal. Transaction on each animal prevents two rooms claiming the same one.
  let usedInRoom=[...Object.keys(data.animalHistory||{}),...Object.values(data.rounds||{}).map(r=>r.animalId).filter(Boolean)];
