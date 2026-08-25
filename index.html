@@ -17,8 +17,8 @@ canvas{display:block;width:100%;height:430px;background:white;border-radius:16px
 <section id="turnQuiz" class="card hidden"><h2>🧠 ค่านิยม T ก่อนดูภาพ</h2><div class="status">ตอบให้ถูกก่อน จึงจะเปิดภาพของคนก่อนหน้า</div><h3 id="turnQuestion"></h3><div id="turnChoices"></div><div id="turnQuizMsg" class="status"></div></section>
 <section id="wait" class="card hidden"><div style="font-size:70px;text-align:center">⏳</div><h2 id="waitTitle" style="text-align:center"></h2><div id="waitMsg" class="status"></div></section>
 <section id="prompt" class="card hidden"><h2 style="text-align:center">👀 จำภาพต้นฉบับ</h2><div id="animalEmoji" class="animal"></div><h2 id="animalName" style="text-align:center;color:#ffd326;margin-top:10px"></h2><div class="timer"><span id="promptTimer">5</span></div></section>
-<section id="draw" class="hidden"><div class="card"><h2 id="drawTitle"></h2><div id="prevBox" class="ref hidden"><div class="small">ดูเฉพาะภาพคนก่อน แล้ววาดใหม่</div><img id="prevImg"></div><div class="timer"><span id="drawTimer">20</span></div><div class="status">หมดเวลาแล้วส่งอัตโนมัติ</div></div><canvas id="canvas"></canvas></section>
-<section id="answer" class="card hidden"><h2>🎯 คนที่ 6 พิมพ์คำตอบ</h2><img id="answerImg" class="answerpic"><div class="timer"><span id="answerTimer">60</span></div><input id="answerText" placeholder="สัตว์อะไร?"><button id="submitAnswer">ส่งคำตอบ</button><div id="answerMsg" class="status"></div></section>
+<section id="draw" class="hidden"><div class="card"><h2 id="drawTitle"></h2><div id="prevBox" class="ref hidden"><div class="small">ดูเฉพาะภาพคนก่อน แล้ววาดใหม่</div><img id="prevImg"></div><div class="timer"><span id="drawTimer">30</span></div><div class="status">หมดเวลาแล้วส่งอัตโนมัติ</div></div><canvas id="canvas"></canvas></section>
+<section id="answer" class="card hidden"><h2>🎯 คนที่ 6 พิมพ์คำตอบ</h2><img id="answerImg" class="answerpic"><div class="timer"><span id="answerTimer">120</span></div><input id="answerText" placeholder="สัตว์อะไร?"><button id="submitAnswer">ส่งคำตอบ</button><div id="answerMsg" class="status"></div><div id="hintBox" class="card hidden" style="background:#244a57"></div></section>
 <section id="roundResult" class="card hidden"><h1 id="roundHeadline"></h1><div id="roundOriginal" class="animal"></div><h2 id="roundAnswer"></h2><div id="roundGallery"></div><button id="nextRound" class="hidden">▶ รอบถัดไป</button><button id="showLeader" class="secondary">🏆 Leaderboard</button></section>
 <section id="leaderboard" class="card hidden"><h1>🏆 LEADERBOARD</h1><div class="small">เรียงจำนวนรอบที่ตอบถูกมากที่สุด แล้วตามด้วยเวลารวมที่น้อยที่สุด</div><div id="ranking"></div><button id="back" class="secondary">← กลับ</button></section>
 
@@ -95,7 +95,10 @@ function render(){
  if(data.status==="drawing"){
    let t=Number(data.turn);
    if(m.seat!==t)return waiting(`คนที่ ${t} กำลังทำภารกิจ`,`คุณคือคนที่ ${m.seat}`);
-   if(t>=2&&t<=5&&!data.rounds?.[data.round]?.turnQuizPassed?.[t])return renderTurnQuiz(t);
+   if(t>=2&&t<=5){
+   const passedToken=data.rounds?.[data.round]?.turnQuizPassed?.[t];
+   if(Number(passedToken)!==Number(data.turnStartedAt))return renderTurnQuiz(t);
+ }
    return renderDraw(t);
  }
  if(data.status==="answer")return m.seat===6?renderAnswer():waiting("คนที่ 6 กำลังทาย","รอผลคำตอบของทีม");
@@ -204,17 +207,123 @@ async function answerTurnQuiz(t,ok){
     return;
   }
   // Only after correct answer is the previous drawing unlocked.
-  await set(ref(db,`rooms/${code}/rounds/${data.round}/turnQuizPassed/${t}`),true);
+  await set(ref(db,`rooms/${code}/rounds/${data.round}/turnQuizPassed/${t}`),Number(data.turnStartedAt));
 }
-function renderDraw(t){let key=`d${data.round}-${t}-${data.turnStartedAt}`;show("draw");$("drawTitle").textContent=`✏️ รอบ ${data.round}/3 • คนวาด ${t}/5`;if(t>1){$("prevBox").classList.remove("hidden");$("prevImg").src=data.rounds[data.round].drawings?.[t-1]||""}else $("prevBox").classList.add("hidden");if(renderKey===key)return;renderKey=key;setupCanvas();stop();countdown("drawTimer",20,()=>submitDrawing(t))}
+function renderDraw(t){let key=`d${data.round}-${t}-${data.turnStartedAt}`;show("draw");$("drawTitle").textContent=`✏️ รอบ ${data.round}/3 • คนวาด ${t}/5`;if(t>1){$("prevBox").classList.remove("hidden");$("prevImg").src=data.rounds[data.round].drawings?.[t-1]||""}else $("prevBox").classList.add("hidden");if(renderKey===key)return;renderKey=key;setupCanvas();stop();countdown("drawTimer",30,()=>submitDrawing(t))}
 async function submitDrawing(t){let img=$("canvas").toDataURL("image/jpeg",.5),u={};u[`rounds/${data.round}/drawings/${t}`]=img;if(t<5){u.turn=t+1;u.turnStartedAt=Date.now()}else{u.status="answer";u.turn=6;u.answerStartedAt=Date.now()}await update(ref(db,`rooms/${code}`),u)}
-function renderAnswer(){let r=data.rounds[data.round],key=`a${data.round}-${data.answerStartedAt}`;show("answer");$("answerImg").src=r.drawings?.[5]||"";let elapsed=Math.floor((Date.now()-Number(data.answerStartedAt))/1000),left=Math.max(0,60-elapsed);$("answerTimer").textContent=left;
- if(renderKey!==key){renderKey=key;$("answerText").value="";$("answerMsg").textContent="";stop();timer=setInterval(()=>{let l=Math.max(0,60-Math.floor((Date.now()-Number(data.answerStartedAt))/1000));$("answerTimer").textContent=l;if(l<=0){stop();timeoutRound()}},250)}}
-async function submitAnswer(){let left=Number($("answerTimer").textContent);if(left<=0)return;let r=data.rounds[data.round],text=$("answerText").value;if(!answerMatches(r.animalId,text)){$("answerMsg").textContent="❌ ยังไม่ถูก ลองใหม่ได้จนหมดเวลา";return}
- let elapsed=Math.min(60,Math.max(0,(Date.now()-Number(data.answerStartedAt))/1000));await finishRound(true,elapsed,text)}
-async function timeoutRound(){let snap=await get(ref(db,`rooms/${code}/status`));if(snap.val()!=="answer")return;await finishRound(false,60,"")}
+const animalHints={
+ elephant:["เป็นสัตว์บกขนาดใหญ่มาก","มีงวงยาวและงา"],
+ giraffe:["เป็นสัตว์กินพืชตัวสูง","มีคอยาวมาก"],
+ lion:["เป็นสัตว์นักล่าขนาดใหญ่","ตัวผู้มักมีแผงคอ"],
+ tiger:["เป็นสัตว์ตระกูลแมวขนาดใหญ่","มีลายพาดกลอน"],
+ panda:["เป็นหมีชนิดหนึ่ง","ชอบกินไผ่และมีสีขาวดำ"],
+ monkey:["เป็นสัตว์ที่ปีนต้นไม้เก่ง","มีมือคล้ายคนและหางยาวในหลายชนิด"],
+ dog:["เป็นสัตว์เลี้ยงยอดนิยม","มักเห่าและซื่อสัตย์กับเจ้าของ"],
+ cat:["เป็นสัตว์เลี้ยงยอดนิยม","มักร้องเหมียว"],
+ rabbit:["เป็นสัตว์ตัวเล็กหูยาว","ชอบกินผักและกระโดด"],
+ pig:["เป็นสัตว์เลี้ยงในฟาร์ม","มีจมูกเป็นแผ่นกลม"],
+ cow:["เป็นสัตว์เลี้ยงในฟาร์ม","ให้นมและมักมีเขา"],
+ horse:["เป็นสัตว์ที่ใช้ขี่ได้","วิ่งเร็วและมีแผงคอ"],
+ crocodile:["เป็นสัตว์เลื้อยคลานขนาดใหญ่","มีปากยาวและฟันแหลม"],
+ turtle:["เป็นสัตว์เลื้อยคลาน","มีกระดองแข็ง"],
+ penguin:["เป็นนกที่บินไม่ได้","เดินตัวตรงและชอบอากาศหนาว"],
+ chicken:["เป็นสัตว์ปีกในฟาร์ม","ออกไข่และขันในตอนเช้า"],
+ octopus:["อาศัยอยู่ในทะเล","มีหนวด 8 เส้น"],
+ crab:["อาศัยได้ทั้งทะเลและชายฝั่ง","เดินด้านข้างและมีก้าม"],
+ butterfly:["เป็นแมลงมีปีก","ปีกมีสีสวยและมาจากหนอน"],
+ frog:["เป็นสัตว์ครึ่งบกครึ่งน้ำ","กระโดดเก่งและร้องอ๊บ ๆ"],
+ fox:["หน้าคล้ายสุนัข","มักมีหางฟู"],
+ bear:["เป็นสัตว์ตัวใหญ่ขนหนา","บางชนิดจำศีล"],
+ koala:["เป็นสัตว์จากออสเตรเลีย","ชอบกินใบยูคาลิปตัส"],
+ mouse:["เป็นสัตว์ตัวเล็กมาก","ชอบแทะและมีหางยาว"],
+ hamster:["เป็นสัตว์เลี้ยงตัวเล็ก","ชอบเก็บอาหารไว้ในกระพุ้งแก้ม"],
+ wolf:["อยู่ในตระกูลสุนัข","มักอยู่เป็นฝูงและหอน"],
+ boar:["เป็นญาติของหมู","มีเขี้ยวและอาศัยในป่า"],
+ zebra:["รูปร่างคล้ายม้า","มีลายขาวดำทั่วตัว"],
+ gorilla:["เป็นลิงไม่มีหางขนาดใหญ่","แข็งแรงและเดินด้วยข้อนิ้ว"],
+ orangutan:["เป็นลิงไม่มีหาง","มีขนสีน้ำตาลแดงและแขนยาว"],
+ camel:["อาศัยในพื้นที่แห้งแล้ง","มีโหนกบนหลัง"],
+ llama:["เป็นสัตว์เลี้ยงจากอเมริกาใต้","คอยาวและขนฟู"],
+ deer:["เป็นสัตว์กินพืช","ตัวผู้หลายชนิดมีเขากิ่ง"],
+ goat:["เป็นสัตว์เลี้ยงในฟาร์ม","ชอบปีนและมีเขา"],
+ sheep:["เป็นสัตว์เลี้ยงในฟาร์ม","มีขนหนานุ่มใช้ทำไหมพรม"],
+ rhino:["เป็นสัตว์บกขนาดใหญ่","มีนออยู่บนจมูก"],
+ hippo:["เป็นสัตว์ตัวใหญ่มาก","ชอบอยู่ในน้ำและปากกว้าง"],
+ kangaroo:["เป็นสัตว์จากออสเตรเลีย","กระโดดด้วยขาหลังและมีกระเป๋าหน้าท้อง"],
+ sloth:["อาศัยบนต้นไม้","เคลื่อนไหวช้ามาก"],
+ otter:["เป็นสัตว์เลี้ยงลูกด้วยนมกึ่งน้ำ","ว่ายน้ำเก่งและชอบเล่น"],
+ skunk:["เป็นสัตว์ขนาดเล็กสีดำขาว","ปล่อยกลิ่นแรงเพื่อป้องกันตัว"],
+ badger:["เป็นสัตว์ขุดโพรง","ลำตัวเตี้ยและแข็งแรง"],
+ beaver:["เป็นสัตว์กึ่งน้ำ","สร้างเขื่อนจากกิ่งไม้"],
+ hedgehog:["เป็นสัตว์ตัวเล็ก","มีหนามทั่วหลัง"],
+ bat:["เป็นสัตว์เลี้ยงลูกด้วยนม","บินได้และมักออกหากินกลางคืน"],
+ owl:["เป็นนกนักล่ากลางคืน","ตากลมโตและหันคอได้มาก"],
+ eagle:["เป็นนกล่าเหยื่อขนาดใหญ่","สายตาดีและกรงเล็บแข็งแรง"],
+ duck:["เป็นสัตว์ปีกที่ชอบน้ำ","ปากแบนและร้องก๊าบ"],
+ swan:["เป็นนกน้ำขนาดใหญ่","คอยาวและสง่างาม"],
+ flamingo:["เป็นนกขายาว","มักมีสีชมพู"],
+ parrot:["เป็นนกสีสวย","เลียนเสียงคนได้"],
+ peacock:["เป็นนกที่ตัวผู้มีหางสวย","กางหางเป็นพัด"],
+ turkey:["เป็นสัตว์ปีกขนาดใหญ่","มีเหนียงบริเวณคอ"],
+ dolphin:["เป็นสัตว์เลี้ยงลูกด้วยนมในทะเล","ฉลาดและกระโดดพ้นน้ำได้"],
+ whale:["เป็นสัตว์เลี้ยงลูกด้วยนมในทะเลขนาดใหญ่มาก","พ่นลมหายใจขึ้นเหนือผิวน้ำ"],
+ shark:["เป็นปลานักล่า","มีฟันหลายแถว"],
+ seal:["เป็นสัตว์ทะเลเลี้ยงลูกด้วยนม","มีครีบและมักนอนบนโขดหิน"],
+ squid:["อาศัยในทะเล","ลำตัวยาวและมีหนวด"],
+ lobster:["อาศัยในทะเล","มีก้ามใหญ่และเปลือกแข็ง"],
+ shrimp:["อาศัยในน้ำ","ตัวเล็กมีหนวดและเปลือกแข็ง"]
+};
+function getAnimalHints(id){return animalHints[id]||["เป็นสัตว์ชนิดหนึ่ง","ลองสังเกตรูปร่างและส่วนเด่นของภาพ"];}
+function renderAnswer(){
+ let r=data.rounds[data.round],key=`a${data.round}-${data.answerStartedAt}`;
+ show("answer");
+ $("answerImg").src=r.drawings?.[5]||"";
+ const wrong=Number(r.answerWrong||0);
+ const hints=getAnimalHints(r.animalId);
+ if(wrong>=2){
+   $("hintBox").classList.remove("hidden");
+   $("hintBox").innerHTML=`💡 <b>คำใบ้ที่ 1:</b> ${esc(hints[0])}`+(wrong>=3?`<br>💡 <b>คำใบ้ที่ 2:</b> ${esc(hints[1])}`:"");
+ }else{
+   $("hintBox").classList.add("hidden");
+   $("hintBox").innerHTML="";
+ }
+ let elapsed=Math.floor((Date.now()-Number(data.answerStartedAt))/1000),left=Math.max(0,120-elapsed);
+ $("answerTimer").textContent=left;
+ if(renderKey!==key){
+   renderKey=key;
+   $("answerText").value="";
+   $("answerMsg").textContent="";
+   stop();
+   timer=setInterval(()=>{
+     let l=Math.max(0,120-Math.floor((Date.now()-Number(data.answerStartedAt))/1000));
+     $("answerTimer").textContent=l;
+     if(l<=0){stop();timeoutRound()}
+   },250);
+ }
+}
+async function submitAnswer(){
+ let left=Number($("answerTimer").textContent);if(left<=0)return;
+ let r=data.rounds[data.round],text=$("answerText").value;
+ if(!answerMatches(r.animalId,text)){
+   const wrongRef=ref(db,`rooms/${code}/rounds/${data.round}/answerWrong`);
+   const result=await runTransaction(wrongRef,cur=>Number(cur||0)+1);
+   const wrong=Number(result.snapshot.val()||0);
+   if(wrong===1)$("answerMsg").textContent="❌ ยังไม่ถูก ลองใหม่อีกครั้ง";
+   else if(wrong===2)$("answerMsg").textContent="❌ ยังไม่ถูก — เปิดคำใบ้ที่ 1 แล้ว";
+   else if(wrong===3)$("answerMsg").textContent="❌ ยังไม่ถูก — เพิ่มคำใบ้ที่ 2 แล้ว";
+   else $("answerMsg").textContent=`❌ ยังไม่ถูก ลองใหม่ได้จนหมดเวลา (ผิด ${wrong} ครั้ง)`;
+   return;
+ }
+ let elapsed=Math.min(120,Math.max(0,(Date.now()-Number(data.answerStartedAt))/1000));
+ await finishRound(true,elapsed,text);
+}
+async function timeoutRound(){
+ let snap=await get(ref(db,`rooms/${code}/status`));
+ if(snap.val()!=="answer")return;
+ await finishRound(false,120,"");
+}
 async function finishRound(correct,elapsed,text){let n=Number(data.round),a=animal(data.rounds[n].animalId);let u={status:"roundResult"};u[`rounds/${n}/correct`]=correct;u[`rounds/${n}/elapsed`]=Number(elapsed.toFixed(1));u[`rounds/${n}/answer`]=text;u[`rounds/${n}/finishedAt`]=Date.now();await update(ref(db,`rooms/${code}`),u);await writeLeaderboard(n,correct,elapsed,a.name)}
-async function writeLeaderboard(n,correct,elapsed,answer){let ps=players().map(p=>p.name);let rounds={...(data.rounds||{})};rounds[n]={...(rounds[n]||{}),correct,elapsed};let done=Object.values(rounds).filter(r=>r.finishedAt||r.correct!==undefined);let correctRounds=done.filter(r=>r.correct).length,totalTime=done.reduce((s,r)=>s+Number(r.elapsed||60),0);await set(ref(db,`leaderboard/${code}`),{room:code,players:ps,correctRounds,totalTime:Number(totalTime.toFixed(1)),roundsFinished:done.length,updatedAt:Date.now()})}
+async function writeLeaderboard(n,correct,elapsed,answer){let ps=players().map(p=>p.name);let rounds={...(data.rounds||{})};rounds[n]={...(rounds[n]||{}),correct,elapsed};let done=Object.values(rounds).filter(r=>r.finishedAt||r.correct!==undefined);let correctRounds=done.filter(r=>r.correct).length,totalTime=done.reduce((s,r)=>s+Number(r.elapsed||120),0);await set(ref(db,`leaderboard/${code}`),{room:code,players:ps,correctRounds,totalTime:Number(totalTime.toFixed(1)),roundsFinished:done.length,updatedAt:Date.now()})}
 function renderRoundResult(){stop();show("roundResult");let r=data.rounds[data.round],a=animal(r.animalId);$("roundHeadline").textContent=r.correct?"🎉 ตอบถูก!":"⏰ หมดเวลา";$("roundOriginal").textContent=a.emoji;$("roundAnswer").textContent=`เฉลย: ${a.name}${r.correct?` • ${Number(r.elapsed).toFixed(1)} วินาที`:""}`;$("roundGallery").innerHTML=[1,2,3,4,5].map(i=>`<div class="result"><h3>ภาพคนที่ ${i}</h3><img src="${r.drawings?.[i]||""}"></div>`).join("");
  if(me().seat===1&&Number(data.round)<3){$("nextRound").classList.remove("hidden");$("nextRound").textContent=`▶ เริ่มรอบ ${Number(data.round)+1}`}else $("nextRound").classList.add("hidden")}
 async function nextRound(){await beginRound(Number(data.round)+1)}
