@@ -12,7 +12,7 @@ canvas{display:block;width:100%;height:430px;background:white;border-radius:16px
 <h1>🐾 NRT TEAMWORK DRAW</h1><div class="sub">20 ห้อง • ห้องละ 6 คน • 3 รอบ • TEAMWORK QUIZ • Leaderboard</div>
 
 <section id="home" class="card"><input id="name" placeholder="ชื่อผู้เล่น"><select id="room"></select><button id="join">เข้าห้อง</button><button id="leader" class="secondary">🏆 ดู Leaderboard</button><div id="homeMsg" class="status"></div></section>
-<section id="lobby" class="card hidden"><h2 id="roomTitle"></h2><div id="players"></div><div id="lobbyMsg" class="status"></div><button id="start" class="hidden">เริ่ม TEAMWORK QUIZ</button><button id="resetGame" class="secondary hidden">🔄 เริ่มเกมใหม่</button><button id="leave" class="danger">ออกจากห้อง</button></section>
+<section id="lobby" class="card hidden"><h2 id="roomTitle"></h2><div id="players"></div><div id="lobbyMsg" class="status"></div><button id="start" class="hidden">เริ่ม TEAMWORK QUIZ</button><button id="resetGame" class="secondary hidden">🔄 เริ่มเกมใหม่ (ล้างทั้งหมด)</button><button id="leave" class="danger">ออกจากห้อง</button></section>
 <section id="quiz" class="card hidden"><h2>🧠 TEAMWORK QUIZ</h2><div id="quizProgress" class="status"></div><h3 id="question"></h3><div id="choices"></div><div id="quizMsg" class="status"></div></section>
 <section id="turnQuiz" class="card hidden"><h2>🧠 ค่านิยม T ก่อนดูภาพ</h2><div class="status">ตอบให้ถูกก่อน จึงจะเปิดภาพของคนก่อนหน้า</div><h3 id="turnQuestion"></h3><div id="turnChoices"></div><div id="turnQuizMsg" class="status"></div></section>
 <section id="wait" class="card hidden"><div style="font-size:70px;text-align:center">⏳</div><h2 id="waitTitle" style="text-align:center"></h2><div id="waitMsg" class="status"></div></section>
@@ -162,10 +162,26 @@ async function showLeaderboard(){let s=await get(ref(db,"leaderboard")),rows=Obj
 async function startQuiz(){quizRenderKey="";await update(ref(db,`rooms/${code}`),{status:"quiz",quizPassed:null,rounds:null,round:null})}
 async function resetGame(){
  if(me()?.seat!==1)return;
- if(!confirm("เริ่มเกมใหม่? ภาพวาดและผล 3 รอบเดิมของห้องนี้จะถูกล้าง แต่ประวัติสัตว์จะถูกเก็บไว้เพื่อไม่ให้สุ่มซ้ำ"))return;
- stop();renderKey="";
- await remove(ref(db,`leaderboard/${code}`));
- await update(ref(db,`rooms/${code}`),{status:"lobby",quizPassed:null,rounds:null,round:null,turn:null,roundStartedAt:null,turnStartedAt:null,answerStartedAt:null});
+ if(!confirm(`🔄 เริ่ม ${code} ใหม่ทั้งหมด?\n\nรายชื่อผู้เล่น Quiz รูปวาด คำตอบ คะแนน Leaderboard และประวัติสัตว์ของห้องนี้จะถูกล้างทั้งหมด`))return;
+ stop();renderKey="";quizRenderKey="";
+
+ // คืนสัตว์ที่ห้องนี้เคยจองไว้กลับสู่คลังทั้งหมด
+ const usedSnap=await get(ref(db,"usedAnimals"));
+ const used=usedSnap.val()||{};
+ const rootUpdates={};
+ Object.entries(used).forEach(([animalId,claim])=>{
+   if(claim&&claim.room===code)rootUpdates[`usedAnimals/${animalId}`]=null;
+ });
+
+ // ล้างคะแนนและล้างห้องทั้งก้อน รวมรายชื่อ/seat เดิม
+ rootUpdates[`leaderboard/${code}`]=null;
+ rootUpdates[`rooms/${code}`]=null;
+ await update(ref(db),rootUpdates);
+
+ data=null;
+ if(unsub){unsub();unsub=null}
+ show("home");
+ $("homeMsg").textContent=`✅ ${code} เริ่มใหม่แล้ว กรุณาใส่ชื่อและเข้าห้องใหม่`;
 }
 async function leave(){quizRenderKey="";let m=me();if(m)await remove(ref(db,`rooms/${code}/players/${uid}`));if(unsub)unsub();data=null;code="";show("home")}
 function countdown(id,n,done){let started=Date.now();$(id).textContent=n;timer=setInterval(()=>{let l=Math.max(0,n-Math.floor((Date.now()-started)/1000));$(id).textContent=l;if(l<=0){stop();done()}},200)}
