@@ -150,8 +150,13 @@ async function tryBeginFirstRound(){
  if(!lock.committed)return;
  try{await beginRound(1)}catch(e){
    await set(ref(db,`rooms/${code}/status`),"quiz");
-   $("quizMsg").textContent="เริ่มรอบไม่สำเร็จ: "+e.message;
+   $("quizMsg").textContent="เริ่มรอบไม่สำเร็จ: "+e.message+" กรุณากดรีเฟรชแล้วลองอีกครั้ง";
  }
+}
+function animalIdForRoomRound(roomCode,roundNo){
+ const roomNo=Math.min(20,Math.max(1,Number(String(roomCode).replace("TEAM",""))||1));
+ const idx=((roomNo-1)*3+(Number(roundNo)-1))%animals.length;
+ return animals[idx].id;
 }
 async function claimAnimal(){
  // claim one globally unused animal. Transaction on each animal prevents two rooms claiming the same one.
@@ -160,7 +165,16 @@ async function claimAnimal(){
  for(let a of pool){let r=await runTransaction(ref(db,`usedAnimals/${a.id}`),cur=>cur?undefined:{room:code,at:Date.now()});if(r.committed){await set(ref(db,`rooms/${code}/animalHistory/${a.id}`),true);return a.id}}
  throw new Error("สัตว์ถูกใช้ครบ 60 ตัวแล้ว");
 }
-async function beginRound(n){try{let id=await claimAnimal();await update(ref(db,`rooms/${code}`),{status:"prompt",round:n,turn:1,roundStartedAt:Date.now(),[`rounds/${n}`]:{animalId:id,startedAt:Date.now(),turnQuizPassed:{}}})}catch(e){$("lobbyMsg").textContent=e.message}}
+async function beginRound(n){
+ const id=animalIdForRoomRound(code,n);
+ await update(ref(db,`rooms/${code}`),{
+   status:"prompt",
+   round:n,
+   turn:1,
+   roundStartedAt:Date.now(),
+   [`rounds/${n}`]:{animalId:id,startedAt:Date.now(),turnQuizPassed:{}}
+ });
+}
 function renderPrompt(){let key=`p${data.round}-${data.roundStartedAt}`;show("prompt");let a=animal(data.rounds[data.round].animalId);$("animalEmoji").textContent=a.emoji;$("animalName").textContent=a.name;if(renderKey===key)return;renderKey=key;stop();countdown("promptTimer",5,async()=>update(ref(db,`rooms/${code}`),{status:"drawing",turn:1,turnStartedAt:Date.now()}))}
 function waiting(t,m){stop();show("wait");$("waitTitle").textContent=t;$("waitMsg").textContent=m}
 function setupCanvas(){let c=$("canvas"),r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=430*d;let x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);x.fillStyle="#fff";x.fillRect(0,0,r.width,430);x.lineWidth=7;x.lineCap="round";x.strokeStyle="#111"}
