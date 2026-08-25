@@ -1,224 +1,193 @@
 <!doctype html>
-<html lang="th">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-<title>NRT TEAMWORK DRAW - 20 Room Competition</title>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>NRT TEAMWORK DRAW - 20 Rooms x 3 Rounds</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0a1820;color:#fff;font-family:Tahoma,Arial,sans-serif}main{max-width:700px;margin:auto;min-height:100vh;padding:14px}h1,h2,h3{margin:8px 0}h1{text-align:center;color:#ffd12a}.sub{text-align:center;color:#cfe4ec;margin-bottom:12px}.card{background:#17313d;border:1px solid #476977;border-radius:18px;padding:18px;margin:12px 0;box-shadow:0 10px 30px #0004}button,input,select{width:100%;border:0;border-radius:12px;padding:14px;margin:6px 0;font-size:17px}button{background:#168347;color:#fff;font-weight:800;cursor:pointer}button.secondary{background:#2f5968}button.danger{background:#8d2d2a}button.gold{background:#a97d0c}button:disabled{opacity:.45;cursor:not-allowed}.hidden{display:none!important}.big{text-align:center;font-size:58px}.status{min-height:28px;text-align:center;color:#ffd12a;font-weight:800}.room-code{text-align:center;font-size:38px;color:#ffd12a;font-weight:900;letter-spacing:3px}.player{display:flex;justify-content:space-between;align-items:center;background:#10252e;padding:11px 12px;border-radius:12px;margin:6px 0}.player.me{outline:2px solid #ffd12a}.host{color:#ffd12a}.timer{text-align:center;font-size:44px;font-weight:900;color:#ffd12a}.animal-card{background:linear-gradient(145deg,#fff8d7,#f5ead0);border-radius:22px;padding:18px;text-align:center;color:#17242b}.animal-emoji{font-size:120px;line-height:1.15;filter:drop-shadow(0 8px 8px #0002)}.reference-box{background:#0f242d;border-radius:16px;padding:12px;margin:10px 0}.reference-box img{width:100%;max-height:260px;object-fit:contain;background:#fff;border-radius:14px}canvas{display:block;width:100%;height:430px;background:#fff;border-radius:18px;touch-action:none;box-shadow:0 10px 30px #0005}.wait-icon{font-size:70px;text-align:center}.note{text-align:center;font-size:13px;color:#bfd1d8}.quiz-choice{text-align:left;background:#2f5968}.answer-box{font-size:20px;text-align:center}.leader-row{background:#10252e;border-radius:14px;padding:12px;margin:8px 0}.leader-top{display:flex;gap:10px;align-items:center;justify-content:space-between}.rank{font-size:25px;font-weight:900;color:#ffd12a}.names{color:#d9edf5;line-height:1.5}.result-grid{display:grid;grid-template-columns:1fr;gap:12px}.result-item{background:#10252e;border-radius:14px;padding:10px}.result-item img{width:100%;max-height:280px;object-fit:contain;background:#fff;border-radius:12px}.result-original{background:linear-gradient(145deg,#fff8d7,#f5ead0);color:#17242b;border-radius:14px;padding:12px;text-align:center}.result-original .animal-emoji{font-size:100px}.top-actions{display:flex;gap:8px}.top-actions button{flex:1}.ok{color:#8df59f}.bad{color:#ff8d84}
-</style>
-</head>
-<body>
-<main>
-<h1>🐾 NRT TEAMWORK DRAW</h1>
-<div class="sub">20 ห้อง • ห้องละ 6 คน • TEAMWORK QUIZ • Animal Relay • Leaderboard</div>
+*{box-sizing:border-box}body{margin:0;background:#071820;color:#fff;font-family:Tahoma,Arial,sans-serif}main{max-width:720px;margin:auto;padding:14px;min-height:100vh}
+h1{text-align:center;color:#ffd326;margin:8px 0}.sub{text-align:center;color:#c5d8df}.card{background:#15333f;border:1px solid #466b79;border-radius:18px;padding:16px;margin:12px 0}
+input,select,button{width:100%;padding:14px;border:0;border-radius:12px;margin:6px 0;font-size:17px}button{background:#168347;color:#fff;font-weight:800}.secondary{background:#315d6c}.danger{background:#8b3030}.hidden{display:none!important}
+.status{text-align:center;color:#ffd326;font-weight:800;min-height:26px}.timer{text-align:center;font-size:48px;color:#ffd326;font-weight:900}.player{display:flex;justify-content:space-between;background:#0d252e;padding:10px;border-radius:10px;margin:5px 0}
+canvas{display:block;width:100%;height:430px;background:white;border-radius:16px;touch-action:none}.ref img,.answerpic{width:100%;max-height:250px;object-fit:contain;background:white;border-radius:12px}.animal{font-size:125px;text-align:center;background:#fff4d6;border-radius:18px;padding:15px}
+.choice{text-align:left}.result img{width:100%;background:#fff;border-radius:10px}.rank{background:#0d252e;padding:12px;border-radius:12px;margin:8px 0}.small{font-size:13px;color:#c5d8df;text-align:center}
+</style></head><body><main>
+<h1>🐾 NRT TEAMWORK DRAW</h1><div class="sub">20 ห้อง • ห้องละ 6 คน • 3 รอบ • TEAMWORK QUIZ • Leaderboard</div>
 
-<section id="homeScreen" class="card">
-  <div class="big">🏭🤝🐘</div>
-  <input id="playerName" placeholder="ชื่อผู้เล่น">
-  <select id="fixedRoom"></select>
-  <button id="joinFixedRoomBtn">🚪 เข้าห้อง</button>
-  <button id="leaderboardBtn" class="gold">🏆 ดู Leaderboard</button>
-  <div id="homeMsg" class="status"></div>
-</section>
-
-<section id="lobbyScreen" class="card hidden">
-  <h2 style="text-align:center">ห้องของทีม</h2>
-  <div id="roomCodeText" class="room-code"></div>
-  <div id="playerList"></div>
-  <div id="lobbyMsg" class="status"></div>
-  <button id="startGameBtn" class="hidden">▶ เริ่ม TEAMWORK QUIZ</button>
-  <button id="leaveRoomBtn" class="danger">ออกจากห้อง</button>
-</section>
-
-<section id="quizScreen" class="card hidden">
-  <div class="big">🧠🤝</div>
-  <h2 style="text-align:center">TEAMWORK QUIZ</h2>
-  <div id="quizProgress" class="status"></div>
-  <h3 id="quizQuestion" style="line-height:1.5"></h3>
-  <div id="quizChoices"></div>
-  <div id="quizMsg" class="status"></div>
-</section>
-
-<section id="promptScreen" class="card hidden">
-  <h2 style="text-align:center">👀 คนที่ 1 ดูภาพต้นฉบับ</h2>
-  <div class="animal-card"><div id="promptEmoji" class="animal-emoji"></div></div>
-  <div class="timer"><span id="promptTimer">5</span></div>
-  <div class="status">จำภาพให้ดี! คนอื่นจะไม่เห็นภาพนี้</div>
-</section>
-
-<section id="waitScreen" class="card hidden">
-  <div class="wait-icon">⏳</div>
-  <h2 id="waitTitle" style="text-align:center"></h2>
-  <div id="waitMsg" class="status"></div>
-</section>
-
-<section id="drawScreen" class="hidden">
-  <div class="card">
-    <h2 id="drawTitle" style="text-align:center"></h2>
-    <div id="previousReference" class="reference-box hidden">
-      <div class="note">ดูเฉพาะภาพจากคนก่อน แล้ววาดใหม่บนพื้นที่สีขาว</div>
-      <img id="previousImage" alt="ภาพจากคนก่อน">
-    </div>
-    <div class="timer">⏱ <span id="drawTimer">20</span></div>
-    <div id="drawMsg" class="status">หมดเวลาแล้วระบบจะส่งอัตโนมัติ</div>
-  </div>
-  <canvas id="drawCanvas"></canvas>
-  <div class="note">ไม่มีปุ่มล้าง / Undo / ส่ง — วาดให้ดีที่สุดภายใน 20 วินาที</div>
-</section>
-
-<section id="answerScreen" class="card hidden">
-  <h2 style="text-align:center">⌨️ คนที่ 6 ทายภาพ!</h2>
-  <div class="reference-box"><img id="answerImage" alt="ภาพจากคนที่ 5"></div>
-  <div class="timer">⏱ <span id="answerTimer">30</span></div>
-  <div class="answer-box">พิมพ์ชื่อสัตว์ให้ถูกก่อนเวลา 0</div>
-  <input id="answerInput" autocomplete="off" placeholder="พิมพ์คำตอบ เช่น ช้าง">
-  <button id="submitAnswerBtn">✅ ส่งคำตอบ</button>
-  <div id="answerMsg" class="status"></div>
-</section>
-
-<section id="resultsScreen" class="card hidden">
-  <div class="big">😂🏆</div>
-  <h1>เฉลย!</h1>
-  <div id="roomResultText" class="status"></div>
-  <div id="resultsGallery" class="result-grid"></div>
-  <div class="top-actions">
-    <button id="resultsLeaderboardBtn" class="gold">🏆 Leaderboard</button>
-    <button id="backLobbyBtn" class="hidden">กลับห้อง</button>
-  </div>
-</section>
-
-<section id="leaderboardScreen" class="card hidden">
-  <div class="big">🏆</div>
-  <h1>LEADERBOARD</h1>
-  <div class="note">เรียงทีมที่ตอบถูกเร็วที่สุด</div>
-  <div id="leaderboardList"></div>
-  <button id="leaderBackBtn" class="secondary">← กลับ</button>
-</section>
-</main>
+<section id="home" class="card"><input id="name" placeholder="ชื่อผู้เล่น"><select id="room"></select><button id="join">เข้าห้อง</button><button id="leader" class="secondary">🏆 ดู Leaderboard</button><div id="homeMsg" class="status"></div></section>
+<section id="lobby" class="card hidden"><h2 id="roomTitle"></h2><div id="players"></div><div id="lobbyMsg" class="status"></div><button id="start" class="hidden">เริ่ม TEAMWORK QUIZ</button><button id="resetGame" class="secondary hidden">🔄 เริ่มเกมใหม่ (ล้างทั้งหมด)</button><button id="leave" class="danger">ออกจากห้อง</button></section>
+<section id="quiz" class="card hidden"><h2>🧠 TEAMWORK QUIZ</h2><div id="quizProgress" class="status"></div><h3 id="question"></h3><div id="choices"></div><div id="quizMsg" class="status"></div></section>
+<section id="turnQuiz" class="card hidden"><h2>🧠 ค่านิยม T ก่อนดูภาพ</h2><div class="status">ตอบให้ถูกก่อน จึงจะเปิดภาพของคนก่อนหน้า</div><h3 id="turnQuestion"></h3><div id="turnChoices"></div><div id="turnQuizMsg" class="status"></div></section>
+<section id="wait" class="card hidden"><div style="font-size:70px;text-align:center">⏳</div><h2 id="waitTitle" style="text-align:center"></h2><div id="waitMsg" class="status"></div></section>
+<section id="prompt" class="card hidden"><h2 style="text-align:center">👀 จำภาพต้นฉบับ</h2><div id="animalEmoji" class="animal"></div><div class="timer"><span id="promptTimer">5</span></div></section>
+<section id="draw" class="hidden"><div class="card"><h2 id="drawTitle"></h2><div id="prevBox" class="ref hidden"><div class="small">ดูเฉพาะภาพคนก่อน แล้ววาดใหม่</div><img id="prevImg"></div><div class="timer"><span id="drawTimer">20</span></div><div class="status">หมดเวลาแล้วส่งอัตโนมัติ</div></div><canvas id="canvas"></canvas></section>
+<section id="answer" class="card hidden"><h2>🎯 คนที่ 6 พิมพ์คำตอบ</h2><img id="answerImg" class="answerpic"><div class="timer"><span id="answerTimer">60</span></div><input id="answerText" placeholder="สัตว์อะไร?"><button id="submitAnswer">ส่งคำตอบ</button><div id="answerMsg" class="status"></div></section>
+<section id="roundResult" class="card hidden"><h1 id="roundHeadline"></h1><div id="roundOriginal" class="animal"></div><h2 id="roundAnswer"></h2><div id="roundGallery"></div><button id="nextRound" class="hidden">▶ รอบถัดไป</button><button id="showLeader" class="secondary">🏆 Leaderboard</button></section>
+<section id="leaderboard" class="card hidden"><h1>🏆 LEADERBOARD</h1><div class="small">เรียงจำนวนรอบที่ตอบถูกมากที่สุด แล้วตามด้วยเวลารวมที่น้อยที่สุด</div><div id="ranking"></div><button id="back" class="secondary">← กลับ</button></section>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyC4wbNF3-dE_YtdCBC4XmCzvuP7IBZ-kxQ",
-  authDomain: "nrt-teamwork-game.firebaseapp.com",
-  databaseURL: "https://nrt-teamwork-game-default-rtdb.firebaseio.com",
-  projectId: "nrt-teamwork-game",
-  storageBucket: "nrt-teamwork-game.firebasestorage.app",
-  messagingSenderId: "216090591382",
-  appId: "1:216090591382:web:73ad2766eba3a5b6bd7ab7"
-};
-const app=initializeApp(firebaseConfig); const db=getDatabase(app);
-
-const FIXED_ROOMS=Array.from({length:20},(_,i)=>`TEAM${String(i+1).padStart(2,"0")}`);
-const animals=[
-{id:"elephant",emoji:"🐘",name:"ช้าง",aliases:["ช้าง"]},{id:"giraffe",emoji:"🦒",name:"ยีราฟ",aliases:["ยีราฟ","ยีราฟฟ์"]},
-{id:"lion",emoji:"🦁",name:"สิงโต",aliases:["สิงโต"]},{id:"tiger",emoji:"🐯",name:"เสือ",aliases:["เสือ","เสือโคร่ง"]},
-{id:"panda",emoji:"🐼",name:"แพนด้า",aliases:["แพนด้า","หมีแพนด้า"]},{id:"monkey",emoji:"🐵",name:"ลิง",aliases:["ลิง"]},
-{id:"dog",emoji:"🐶",name:"สุนัข",aliases:["สุนัข","หมา"]},{id:"cat",emoji:"🐱",name:"แมว",aliases:["แมว"]},
-{id:"rabbit",emoji:"🐰",name:"กระต่าย",aliases:["กระต่าย"]},{id:"pig",emoji:"🐷",name:"หมู",aliases:["หมู"]},
-{id:"cow",emoji:"🐮",name:"วัว",aliases:["วัว"]},{id:"horse",emoji:"🐴",name:"ม้า",aliases:["ม้า"]},
-{id:"crocodile",emoji:"🐊",name:"จระเข้",aliases:["จระเข้"]},{id:"turtle",emoji:"🐢",name:"เต่า",aliases:["เต่า"]},
-{id:"penguin",emoji:"🐧",name:"เพนกวิน",aliases:["เพนกวิน","แพนกวิน"]},{id:"chicken",emoji:"🐓",name:"ไก่",aliases:["ไก่"]},
-{id:"octopus",emoji:"🐙",name:"ปลาหมึก",aliases:["ปลาหมึก","หมึก"]},{id:"crab",emoji:"🦀",name:"ปู",aliases:["ปู"]},
-{id:"butterfly",emoji:"🦋",name:"ผีเสื้อ",aliases:["ผีเสื้อ"]},{id:"frog",emoji:"🐸",name:"กบ",aliases:["กบ"]}
-];
-// Fixed one-to-one mapping guarantees 20 rooms never share an animal.
-const roomAnimal=Object.fromEntries(FIXED_ROOMS.map((r,i)=>[r,animals[i].id]));
-
-const teamworkQuestions=[
-{q:"เพื่อนต่างแผนกมีงานเร่งและงานของเราทำเสร็จแล้ว ควรทำอย่างไร?",a:["เข้าไปช่วยและประสานงานกัน","บอกว่าไม่ใช่งานของเรา","ปล่อยให้เพื่อนจัดการเอง"],correct:0},
-{q:"เมื่อเกิดปัญหาในทีม สิ่งใดเหมาะสมที่สุด?",a:["ช่วยกันหาสาเหตุและทางแก้","รีบหาว่าใครผิด","ไม่พูดถึงปัญหา"],correct:0},
-{q:"การทำงานร่วมกันอย่างสามัคคีหมายถึงข้อใด?",a:["ร่วมมือและรับฟังกัน","ต่างคนต่างทำโดยไม่สื่อสาร","แข่งขันกันเองในทีม"],correct:0},
-{q:"ถ้าเพื่อนทำผิดพลาด เราควรทำอย่างไร?",a:["ช่วยกันแก้และเรียนรู้ร่วมกัน","ตำหนิต่อหน้าทุกคน","โยนความรับผิดชอบให้เพื่อน"],correct:0},
-{q:"ทีมอื่นขอข้อมูลที่จำเป็นต่อการแก้ปัญหา เราควรทำอย่างไร?",a:["ให้ข้อมูลและช่วยประสานงาน","เก็บข้อมูลไว้กับทีมเรา","ให้เขาไปหาเอง"],correct:0},
-{q:"ข้อใดตรงกับค่านิยมไม่โทษกันไปมา?",a:["มองปัญหาและแก้ร่วมกัน","หาคนรับผิดก่อนเสมอ","บอกว่าเป็นความผิดอีกแผนก"],correct:0}
-];
-
-const screens=["homeScreen","lobbyScreen","quizScreen","promptScreen","waitScreen","drawScreen","answerScreen","resultsScreen","leaderboardScreen"];
-const el=id=>document.getElementById(id);
-let roomCode="",roomData=null,unsubscribeRoom=null,previousScreen="homeScreen";
-let myId=localStorage.getItem("nrt_comp_uid")||crypto.randomUUID(); localStorage.setItem("nrt_comp_uid",myId);
-let myName="",promptTimer=null,drawTimer=null,answerTimer=null,currentKey="";
-let drawing=false,lastX=0,lastY=0;
-
-function showScreen(id){screens.forEach(s=>el(s).classList.add("hidden"));el(id).classList.remove("hidden");previousScreen=id}
-function getPlayers(data){return data?.players?Object.values(data.players).sort((a,b)=>a.seat-b.seat):[]}
-function getMe(){return roomData?.players?.[myId]||null}
-function animalById(id){return animals.find(a=>a.id===id)||animals[0]}
-function stopTimers(){clearInterval(promptTimer);clearInterval(drawTimer);clearInterval(answerTimer)}
-function escapeHtml(text){return String(text).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
-function normalizeAnswer(v){return String(v||"").trim().toLowerCase().replace(/\s+/g,"").replace(/[ๆฯ.!?,]/g,"")}
-function isCorrectAnswer(v,animal){const n=normalizeAnswer(v);return animal.aliases.some(a=>normalizeAnswer(a)===n)}
-
-function initRoomSelect(){el("fixedRoom").innerHTML='<option value="">เลือกห้อง TEAM01–TEAM20</option>'+FIXED_ROOMS.map(r=>`<option value="${r}">${r}</option>`).join("")}
-
-async function joinFixedRoom(){
- myName=el("playerName").value.trim();roomCode=el("fixedRoom").value;
- if(!myName||!FIXED_ROOMS.includes(roomCode)){el("homeMsg").textContent="กรุณาใส่ชื่อและเลือกห้อง";return}
- el("homeMsg").textContent="กำลังเข้าห้อง...";
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+import {getDatabase,ref,set,get,onValue,update,remove,runTransaction} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+const firebaseConfig={apiKey:"AIzaSyC4wbNF3-dE_YtdCBC4XmCzvuP7IBZ-kxQ",authDomain:"nrt-teamwork-game.firebaseapp.com",databaseURL:"https://nrt-teamwork-game-default-rtdb.firebaseio.com",projectId:"nrt-teamwork-game",storageBucket:"nrt-teamwork-game.firebasestorage.app",messagingSenderId:"216090591382",appId:"1:216090591382:web:73ad2766eba3a5b6bd7ab7"};
+const app=initializeApp(firebaseConfig),db=getDatabase(app);
+const animals=[{"id": "elephant", "emoji": "🐘", "name": "ช้าง", "aliases": ["ช้าง"]}, {"id": "giraffe", "emoji": "🦒", "name": "ยีราฟ", "aliases": ["ยีราฟ"]}, {"id": "lion", "emoji": "🦁", "name": "สิงโต", "aliases": ["สิงโต"]}, {"id": "tiger", "emoji": "🐯", "name": "เสือ", "aliases": ["เสือ", "เสือโคร่ง"]}, {"id": "panda", "emoji": "🐼", "name": "แพนด้า", "aliases": ["แพนด้า", "หมีแพนด้า"]}, {"id": "monkey", "emoji": "🐵", "name": "ลิง", "aliases": ["ลิง"]}, {"id": "dog", "emoji": "🐶", "name": "สุนัข", "aliases": ["สุนัข", "หมา"]}, {"id": "cat", "emoji": "🐱", "name": "แมว", "aliases": ["แมว"]}, {"id": "rabbit", "emoji": "🐰", "name": "กระต่าย", "aliases": ["กระต่าย"]}, {"id": "pig", "emoji": "🐷", "name": "หมู", "aliases": ["หมู"]}, {"id": "cow", "emoji": "🐮", "name": "วัว", "aliases": ["วัว"]}, {"id": "horse", "emoji": "🐴", "name": "ม้า", "aliases": ["ม้า"]}, {"id": "crocodile", "emoji": "🐊", "name": "จระเข้", "aliases": ["จระเข้"]}, {"id": "turtle", "emoji": "🐢", "name": "เต่า", "aliases": ["เต่า"]}, {"id": "penguin", "emoji": "🐧", "name": "เพนกวิน", "aliases": ["เพนกวิน"]}, {"id": "chicken", "emoji": "🐓", "name": "ไก่", "aliases": ["ไก่"]}, {"id": "octopus", "emoji": "🐙", "name": "ปลาหมึก", "aliases": ["ปลาหมึก"]}, {"id": "crab", "emoji": "🦀", "name": "ปู", "aliases": ["ปู"]}, {"id": "butterfly", "emoji": "🦋", "name": "ผีเสื้อ", "aliases": ["ผีเสื้อ"]}, {"id": "frog", "emoji": "🐸", "name": "กบ", "aliases": ["กบ"]}, {"id": "fox", "emoji": "🦊", "name": "สุนัขจิ้งจอก", "aliases": ["สุนัขจิ้งจอก", "จิ้งจอก"]}, {"id": "bear", "emoji": "🐻", "name": "หมี", "aliases": ["หมี"]}, {"id": "koala", "emoji": "🐨", "name": "โคอาลา", "aliases": ["โคอาลา"]}, {"id": "mouse", "emoji": "🐭", "name": "หนู", "aliases": ["หนู"]}, {"id": "hamster", "emoji": "🐹", "name": "แฮมสเตอร์", "aliases": ["แฮมสเตอร์"]}, {"id": "wolf", "emoji": "🐺", "name": "หมาป่า", "aliases": ["หมาป่า"]}, {"id": "boar", "emoji": "🐗", "name": "หมูป่า", "aliases": ["หมูป่า"]}, {"id": "zebra", "emoji": "🦓", "name": "ม้าลาย", "aliases": ["ม้าลาย"]}, {"id": "gorilla", "emoji": "🦍", "name": "กอริลลา", "aliases": ["กอริลลา"]}, {"id": "orangutan", "emoji": "🦧", "name": "อุรังอุตัง", "aliases": ["อุรังอุตัง"]}, {"id": "camel", "emoji": "🐫", "name": "อูฐ", "aliases": ["อูฐ"]}, {"id": "llama", "emoji": "🦙", "name": "ลามา", "aliases": ["ลามา"]}, {"id": "deer", "emoji": "🦌", "name": "กวาง", "aliases": ["กวาง"]}, {"id": "goat", "emoji": "🐐", "name": "แพะ", "aliases": ["แพะ"]}, {"id": "sheep", "emoji": "🐑", "name": "แกะ", "aliases": ["แกะ"]}, {"id": "rhino", "emoji": "🦏", "name": "แรด", "aliases": ["แรด"]}, {"id": "hippo", "emoji": "🦛", "name": "ฮิปโป", "aliases": ["ฮิปโป", "ฮิปโปโปเตมัส"]}, {"id": "kangaroo", "emoji": "🦘", "name": "จิงโจ้", "aliases": ["จิงโจ้"]}, {"id": "sloth", "emoji": "🦥", "name": "สลอธ", "aliases": ["สลอธ"]}, {"id": "otter", "emoji": "🦦", "name": "นาก", "aliases": ["นาก"]}, {"id": "skunk", "emoji": "🦨", "name": "สกังก์", "aliases": ["สกังก์"]}, {"id": "badger", "emoji": "🦡", "name": "แบดเจอร์", "aliases": ["แบดเจอร์"]}, {"id": "beaver", "emoji": "🦫", "name": "บีเวอร์", "aliases": ["บีเวอร์"]}, {"id": "hedgehog", "emoji": "🦔", "name": "เม่น", "aliases": ["เม่น"]}, {"id": "bat", "emoji": "🦇", "name": "ค้างคาว", "aliases": ["ค้างคาว"]}, {"id": "owl", "emoji": "🦉", "name": "นกฮูก", "aliases": ["นกฮูก"]}, {"id": "eagle", "emoji": "🦅", "name": "นกอินทรี", "aliases": ["นกอินทรี", "อินทรี"]}, {"id": "duck", "emoji": "🦆", "name": "เป็ด", "aliases": ["เป็ด"]}, {"id": "swan", "emoji": "🦢", "name": "หงส์", "aliases": ["หงส์"]}, {"id": "flamingo", "emoji": "🦩", "name": "ฟลามิงโก", "aliases": ["ฟลามิงโก"]}, {"id": "parrot", "emoji": "🦜", "name": "นกแก้ว", "aliases": ["นกแก้ว"]}, {"id": "peacock", "emoji": "🦚", "name": "นกยูง", "aliases": ["นกยูง"]}, {"id": "turkey", "emoji": "🦃", "name": "ไก่งวง", "aliases": ["ไก่งวง"]}, {"id": "dolphin", "emoji": "🐬", "name": "โลมา", "aliases": ["โลมา"]}, {"id": "whale", "emoji": "🐋", "name": "วาฬ", "aliases": ["วาฬ", "ปลาวาฬ"]}, {"id": "shark", "emoji": "🦈", "name": "ฉลาม", "aliases": ["ฉลาม"]}, {"id": "seal", "emoji": "🦭", "name": "แมวน้ำ", "aliases": ["แมวน้ำ"]}, {"id": "squid", "emoji": "🦑", "name": "หมึกกล้วย", "aliases": ["หมึกกล้วย", "ปลาหมึกกล้วย"]}, {"id": "lobster", "emoji": "🦞", "name": "กุ้งมังกร", "aliases": ["กุ้งมังกร"]}, {"id": "shrimp", "emoji": "🦐", "name": "กุ้ง", "aliases": ["กุ้ง"]}];
+const questions=[{"q": "เพื่อนต่างทีมมีงานเร่ง แต่งานของเราทำเสร็จแล้ว ควรทำอย่างไร?", "a": ["เข้าไปช่วยและประสานงาน", "บอกว่าไม่ใช่งานเรา", "รอให้หัวหน้าสั่ง"], "correct": 0}, {"q": "เกิดปัญหาในงาน สิ่งแรกที่ทีมควรทำคืออะไร?", "a": ["ช่วยกันหาข้อเท็จจริงและทางแก้", "หาคนผิดก่อน", "ปิดปัญหาไว้"], "correct": 0}, {"q": "ความคิดเห็นในทีมไม่ตรงกัน ควรทำอย่างไร?", "a": ["รับฟังเหตุผลแล้วหาข้อตกลง", "ให้คนเสียงดังสุดตัดสิน", "เลิกคุย"], "correct": 0}, {"q": "เพื่อนทำผิดพลาดจนต้องแก้งานใหม่ ควรทำอย่างไร?", "a": ["ช่วยแก้และเรียนรู้ร่วมกัน", "ตำหนิต่อหน้าทีม", "โยนให้เพื่อนรับผิดคนเดียว"], "correct": 0}, {"q": "ทีมอื่นขอข้อมูลที่จำเป็น ควรทำอย่างไร?", "a": ["ให้ข้อมูลที่ถูกต้องและช่วยประสาน", "เก็บไว้กับทีมเรา", "ให้เขาหาเอง"], "correct": 0}, {"q": "งานใกล้ไม่ทันกำหนด วิธีใดแสดง TEAMWORK?", "a": ["แจ้งทีมและช่วยกันจัดลำดับงาน", "เงียบไว้ก่อน", "รอหัวหน้ามาแก้"], "correct": 0}, {"q": "ข้อใดตรงกับ 'ไม่โทษกันไปมา' มากที่สุด?", "a": ["โฟกัสสาเหตุและการป้องกันร่วมกัน", "ระบุชื่อคนผิดทันที", "บอกว่าเป็นเรื่องอีกแผนก"], "correct": 0}, {"q": "เพื่อนใหม่ยังไม่เข้าใจกระบวนการ ควรทำอย่างไร?", "a": ["แบ่งเวลาช่วยอธิบายและตรวจความเข้าใจ", "ปล่อยให้เรียนรู้เอง", "ให้ทำเฉพาะงานง่ายตลอด"], "correct": 0}, {"q": "ข้อมูลจากสองแผนกไม่ตรงกัน ควรทำอย่างไร?", "a": ["ตรวจสอบข้อมูลร่วมกันก่อนตัดสินใจ", "เชื่อทีมตัวเองทันที", "ส่งต่อให้หัวหน้าอย่างเดียว"], "correct": 0}, {"q": "สมาชิกในทีมเงียบและไม่เสนอความคิดเห็น ควรทำอย่างไร?", "a": ["เปิดโอกาสและชวนให้มีส่วนร่วม", "ตัดสินใจแทนเขา", "ไม่ต้องถาม"], "correct": 0}, {"q": "มีหลายงานเร่งพร้อมกัน ทีมควรทำอย่างไร?", "a": ["ตกลงลำดับความสำคัญร่วมกัน", "ต่างคนต่างเลือกงานเอง", "ทำงานที่ง่ายก่อนเสมอ"], "correct": 0}, {"q": "เห็นเพื่อนกำลังทำงานเสี่ยงผิดพลาด ควรทำอย่างไร?", "a": ["เตือนและช่วยตรวจสอบ", "รอให้ผิดก่อน", "ถ่ายรูปไว้เป็นหลักฐาน"], "correct": 0}, {"q": "เมื่อทีมทำงานสำเร็จ ควรทำอย่างไร?", "a": ["ชื่นชมความร่วมมือของทุกคน", "ให้เครดิตคนเดียว", "ไม่ต้องพูดอะไร"], "correct": 0}, {"q": "การช่วยเหลือข้ามทีมที่ดีควรเป็นแบบใด?", "a": ["ช่วยตามความสามารถและประสานคนที่เหมาะสม", "รับทุกงานไว้คนเดียว", "ปฏิเสธทันที"], "correct": 0}, {"q": "เมื่อได้รับคำวิจารณ์จากเพื่อนร่วมทีม ควรทำอย่างไร?", "a": ["รับฟังและพิจารณาข้อเท็จจริง", "โต้กลับทันที", "ไม่คุยกับคนนั้นอีก"], "correct": 0}, {"q": "ถ้าพบปัญหาที่กระทบหลายแผนก ควรทำอย่างไร?", "a": ["ดึงผู้เกี่ยวข้องมาช่วยกันแก้", "แก้เฉพาะส่วนของเรา", "รอให้แผนกอื่นเริ่มก่อน"], "correct": 0}, {"q": "เพื่อนขอให้ช่วยตรวจงานก่อนส่ง ควรทำอย่างไร?", "a": ["ช่วยตรวจและแจ้งจุดที่ควรแก้", "บอกว่าเป็นหน้าที่เขา", "เซ็นผ่านโดยไม่ดู"], "correct": 0}, {"q": "ทีมมีเวลาจำกัด การสื่อสารควรเป็นอย่างไร?", "a": ["สั้น ชัดเจน และยืนยันความเข้าใจ", "พูดรายละเอียดทุกอย่างพร้อมกัน", "ไม่ต้องสรุป"], "correct": 0}, {"q": "เมื่อแผนงานเปลี่ยนกะทันหัน ควรทำอย่างไร?", "a": ["แจ้งผลกระทบและปรับแผนร่วมกัน", "ทำตามแผนเดิมต่อ", "โทษคนที่เปลี่ยนแผน"], "correct": 0}, {"q": "คนหนึ่งในทีมมีงานมากกว่าคนอื่น ควรทำอย่างไร?", "a": ["ช่วยแบ่งงานตามความเหมาะสม", "ปล่อยเพราะเป็นหน้าที่เขา", "รอให้เขาขอหลายครั้ง"], "correct": 0}, {"q": "ถ้าคุณไม่แน่ใจข้อมูลที่กำลังจะส่งต่อ ควรทำอย่างไร?", "a": ["ตรวจสอบก่อนแล้วค่อยสื่อสาร", "เดาแล้วส่งไปก่อน", "ไม่ต้องบอกใคร"], "correct": 0}, {"q": "การประชุมทีมที่ดีควรจบด้วยอะไร?", "a": ["ข้อสรุป ผู้รับผิดชอบ และขั้นตอนถัดไป", "การหาว่าใครผิด", "คุยต่อโดยไม่มีข้อสรุป"], "correct": 0}, {"q": "เพื่อนเสนอวิธีใหม่ที่ต่างจากวิธีเดิม ควรทำอย่างไร?", "a": ["ฟังเหตุผลและทดลองอย่างเหมาะสม", "ปฏิเสธเพราะไม่เคยทำ", "ให้หยุดเสนอ"], "correct": 0}, {"q": "เมื่อเกิดความเข้าใจผิดระหว่างทีม ควรทำอย่างไร?", "a": ["คุยกันตรง ๆ ด้วยข้อมูลและความเคารพ", "ส่งข้อความตำหนิ", "เล่าให้ทีมอื่นฟังก่อน"], "correct": 0}, {"q": "เป้าหมายของทีมสำคัญอย่างไร?", "a": ["ช่วยให้ทุกคนมุ่งไปทางเดียวกัน", "ใช้เพื่อวัดคนที่ช้าที่สุด", "เป็นหน้าที่หัวหน้าเท่านั้น"], "correct": 0}, {"q": "ถ้าเพื่อนช่วยเราแก้ปัญหา ควรทำอย่างไร?", "a": ["ขอบคุณและแบ่งปันสิ่งที่เรียนรู้", "ถือว่าเป็นหน้าที่เขา", "ไม่ต้องบอกทีม"], "correct": 0}, {"q": "เมื่อเจอข้อผิดพลาดซ้ำ ควรทำอย่างไร?", "a": ["หาสาเหตุและปรับวิธีป้องกันร่วมกัน", "เตือนคนเดิมอย่างเดียว", "ปล่อยเพราะเคยเกิดแล้ว"], "correct": 0}, {"q": "การรับฟังที่ดีคือข้อใด?", "a": ["ฟังจนเข้าใจและถามเพื่อยืนยัน", "รอจังหวะพูดของตัวเอง", "ขัดทันทีเมื่อไม่เห็นด้วย"], "correct": 0}, {"q": "ถ้าทีมอื่นทำงานล่าช้าและกระทบเรา ควรทำอย่างไร?", "a": ["คุยหาสาเหตุและช่วยหาทางออก", "ตำหนิในกลุ่มใหญ่", "หยุดประสานงาน"], "correct": 0}, {"q": "สิ่งใดทำให้ทีมแข็งแรงในระยะยาว?", "a": ["ไว้ใจกัน สื่อสาร และช่วยกันเรียนรู้", "แข่งขันกันภายในทีม", "หลีกเลี่ยงการพูดถึงปัญหา"], "correct": 0}];
+const $=id=>document.getElementById(id),screens=["home","lobby","quiz","turnQuiz","wait","prompt","draw","answer","roundResult","leaderboard"];
+let code="",data=null,unsub=null,myName="",drawing=false,lx=0,ly=0,timer=null,renderKey="",quizRenderKey="";
+let uid=localStorage.getItem("nrt60_uid");if(!uid){uid=crypto.randomUUID();localStorage.setItem("nrt60_uid",uid)}
+function show(id){screens.forEach(x=>$(x).classList.add("hidden"));$(id).classList.remove("hidden")}
+function validRoomCode(c){return /^TEAM(0[1-9]|1[0-9]|20)$/.test(c)}
+function normalizeAnswer(s){return String(s||"").trim().toLowerCase().replace(/\s+/g,"")}
+function animal(id){return animals.find(x=>x.id===id)}
+function answerMatches(id,input){let a=animal(id);if(!a)return false;let n=normalizeAnswer(input);return a.aliases.some(x=>normalizeAnswer(x)===n)}
+function players(d=data){return Object.values(d?.players||{}).sort((a,b)=>a.seat-b.seat)}
+function me(){return data?.players?.[uid]}
+function stop(){clearInterval(timer);timer=null}
+for(let i=1;i<=20;i++){let o=document.createElement("option");o.value=`TEAM${String(i).padStart(2,"0")}`;o.textContent=`TEAM${String(i).padStart(2,"0")}`;$("room").appendChild(o)}
+async function join(){
+ myName=$("name").value.trim();code=$("room").value;if(!myName)return $("homeMsg").textContent="กรุณาใส่ชื่อ";
+ let existing=await get(ref(db,`rooms/${code}/players/${uid}`));
+ if(existing.exists()){watch();return}
+ // Atomic seat claim: Firebase transaction prevents duplicate seats.
+ let seatResult=await runTransaction(ref(db,`rooms/${code}/nextSeat`),cur=>{let n=Number(cur||1);if(n>6)return;return n+1});
+ if(!seatResult.committed)return $("homeMsg").textContent="ห้องเต็มแล้ว";
+ let seat=Number(seatResult.snapshot.val())-1;
  try{
-   const roomRef=ref(db,"rooms/"+roomCode);const snap=await get(roomRef);let data=snap.exists()?snap.val():null;
-   if(!data){data={status:"lobby",hostId:myId,promptId:roomAnimal[roomCode],players:{}};await set(roomRef,data)}
-   const players=getPlayers(data);const existing=data.players?.[myId];
-   if(!existing&&players.length>=6){el("homeMsg").textContent="ห้องนี้เต็ม 6 คนแล้ว";return}
-   if(!existing&&data.status!=="lobby"){el("homeMsg").textContent="ห้องนี้เริ่มเกมแล้ว";return}
-   if(!existing){const seat=Math.max(0,...players.map(p=>p.seat))+1;await set(ref(db,`rooms/${roomCode}/players/${myId}`),{id:myId,name:myName,seat,host:seat===1});if(seat===1)await update(roomRef,{hostId:myId})}
-   watchRoom();
- }catch(err){el("homeMsg").textContent="เข้าห้องไม่สำเร็จ: "+err.message}
+   await set(ref(db,`rooms/${code}/players/${uid}`),{id:uid,name:myName,seat,host:seat===1,joinedAt:Date.now()});
+   let st=await get(ref(db,`rooms/${code}/status`));if(!st.exists())await set(ref(db,`rooms/${code}/status`),"lobby");
+   watch();
+ }catch(e){$("homeMsg").textContent=e.message}
 }
-
-function watchRoom(){if(unsubscribeRoom)unsubscribeRoom();unsubscribeRoom=onValue(ref(db,"rooms/"+roomCode),snap=>{if(!snap.exists()){stopTimers();roomData=null;showScreen("homeScreen");el("homeMsg").textContent="ห้องถูกลบ";return}roomData=snap.val();renderState()},err=>{showScreen("homeScreen");el("homeMsg").textContent="Firebase error: "+err.message})}
-
-function renderState(){const me=getMe();if(!me)return;
- if(roomData.status==="lobby")return renderLobby();
- if(roomData.status==="quiz")return renderQuiz();
- if(roomData.status==="prompt"){if(me.seat===1)return renderPrompt();return showWaiting("คนที่ 1 กำลังดูภาพต้นฉบับ","คุณจะไม่เห็นภาพต้นฉบับ")}
- if(roomData.status==="drawing"){const turn=Number(roomData.turn||1);if(me.seat===turn&&turn<=5)return renderDrawing(turn);return showWaiting(`กำลังวาดต่อ: คนที่ ${turn}/5`,`คุณคือผู้เล่นคนที่ ${me.seat}`)}
- if(roomData.status==="answer"){if(me.seat===6)return renderTypedAnswer();return showWaiting("คนที่ 6 กำลังพิมพ์คำตอบ","รอผลและดูอันดับพร้อมกัน")}
- if(roomData.status==="results")return renderResults();
+function watch(){if(unsub)unsub();unsub=onValue(ref(db,`rooms/${code}`),s=>{if(!s.exists()){show("home");return}data=s.val();render()})}
+function render(){
+ let m=me();if(!m)return;
+ if(data.status==="lobby")return renderLobby();
+ if(data.status==="quiz")return renderQuiz();
+ if(data.status==="prompt")return m.seat===1?renderPrompt():waiting("คนที่ 1 กำลังจำภาพ","คุณจะไม่เห็นภาพต้นฉบับ");
+ if(data.status==="drawing"){
+   let t=Number(data.turn);
+   if(m.seat!==t)return waiting(`คนที่ ${t} กำลังทำภารกิจ`,`คุณคือคนที่ ${m.seat}`);
+   if(t>=2&&t<=5&&!data.rounds?.[data.round]?.turnQuizPassed?.[t])return renderTurnQuiz(t);
+   return renderDraw(t);
+ }
+ if(data.status==="answer")return m.seat===6?renderAnswer():waiting("คนที่ 6 กำลังทาย","รอผลคำตอบของทีม");
+ if(data.status==="roundResult")return renderRoundResult();
 }
+function renderLobby(){stop();show("lobby");$("roomTitle").textContent=code;$("players").innerHTML=players().map(p=>`<div class="player"><span>${p.seat}. ${esc(p.name)}</span><b>${p.host?"👑":""}</b></div>`).join("");$("lobbyMsg").textContent=`ผู้เล่น ${players().length}/6`;
+ if(me().seat===1){$("start").classList.remove("hidden");$("start").disabled=players().length!==6;$("resetGame").classList.remove("hidden")}else{$("start").classList.add("hidden");$("resetGame").classList.add("hidden")}}
+function quizForSeat(seat){let base=((Number(code.slice(4))-1)*6+(seat-1))%questions.length;return questions[base]}
+function renderQuiz(){
+ stop();show("quiz");
+ let passed=data.quizPassed||{},count=Object.values(passed).filter(Boolean).length;
+ $("quizProgress").textContent=`ผ่านแล้ว ${count}/6 คน`;
 
-function renderLobby(){stopTimers();currentKey="";showScreen("lobbyScreen");const players=getPlayers(roomData),me=getMe();el("roomCodeText").textContent=roomCode;el("playerList").innerHTML=players.map(p=>`<div class="player ${p.id===myId?"me":""}"><span>${p.seat}. ${escapeHtml(p.name)}</span><span class="${p.host?"host":""}">${p.host?"👑 HOST":""}</span></div>`).join("");el("lobbyMsg").textContent=`ผู้เล่น ${players.length}/6 • โจทย์ของห้องนี้ไม่ซ้ำห้องอื่น`;
- if(me.host){el("startGameBtn").classList.remove("hidden");el("startGameBtn").disabled=players.length!==6;el("startGameBtn").textContent=players.length===6?"▶ เริ่ม TEAMWORK QUIZ":"รอผู้เล่นให้ครบ 6 คน"}else el("startGameBtn").classList.add("hidden")}
+ if(passed[uid]){
+   quizRenderKey="";
+   $("question").textContent="✅ คุณตอบถูกแล้ว";
+   $("choices").innerHTML="";
+   $("quizMsg").textContent="รอเพื่อนในทีม...";
+   return;
+ }
 
-async function startGame(){if(getPlayers(roomData).length!==6)return;await update(ref(db,"rooms/"+roomCode),{status:"quiz",quizPassed:null,drawings:null,result:null,answerStartedAt:null,roundStartedAt:Date.now()})}
+ let q=quizForSeat(me().seat);
+ const stableKey=`${code}:${me().seat}:${q.q}`;
 
-function renderQuiz(){stopTimers();showScreen("quizScreen");const me=getMe(),passed=roomData.quizPassed||{},count=Object.values(passed).filter(Boolean).length;el("quizProgress").textContent=`ผ่านแล้ว ${count}/6 คน`;
- if(passed[myId]){el("quizQuestion").textContent="✅ คุณตอบถูกแล้ว";el("quizChoices").innerHTML="";el("quizMsg").textContent="รอเพื่อนตอบให้ถูกครบทุกคน...";return}
- const q=teamworkQuestions[(me.seat-1)%teamworkQuestions.length];el("quizQuestion").textContent=q.q;el("quizMsg").textContent="";el("quizChoices").innerHTML="";
- q.a.map((text,i)=>({text,i})).sort(()=>Math.random()-.5).forEach(c=>{const b=document.createElement("button");b.className="quiz-choice";b.textContent=c.text;b.onclick=()=>answerQuiz(c.i===q.correct);el("quizChoices").appendChild(b)})}
-async function answerQuiz(correct){if(!correct){el("quizMsg").innerHTML='<span class="bad">❌ ยังไม่ถูก ลองตอบใหม่</span>';return}await set(ref(db,`rooms/${roomCode}/quizPassed/${myId}`),true);const snap=await get(ref(db,`rooms/${roomCode}/quizPassed`));const passed=snap.exists()?snap.val():{};if(Object.values(passed).filter(Boolean).length>=6)await update(ref(db,"rooms/"+roomCode),{status:"prompt",roundStartedAt:Date.now()})}
+ // Firebase อัปเดตสถานะบ่อยเมื่อเพื่อนตอบคำถาม
+ // อัปเดตเฉพาะ progress แต่ไม่สร้างปุ่มใหม่ซ้ำ ๆ
+ // เพื่อให้ A/B/C อยู่ตำแหน่งเดิมตลอดจนกว่าผู้เล่นจะตอบ
+ if(quizRenderKey===stableKey) return;
+ quizRenderKey=stableKey;
 
-function renderPrompt(){const key=`prompt:${roomData.roundStartedAt}`;showScreen("promptScreen");el("promptEmoji").textContent=animalById(roomData.promptId).emoji;if(currentKey===key)return;currentKey=key;clearInterval(promptTimer);let left=5;el("promptTimer").textContent=left;promptTimer=setInterval(async()=>{left--;el("promptTimer").textContent=Math.max(0,left);if(left<=0){clearInterval(promptTimer);await update(ref(db,"rooms/"+roomCode),{status:"drawing",turn:1,turnStartedAt:Date.now()})}},1000)}
-function showWaiting(title,msg){stopTimers();showScreen("waitScreen");el("waitTitle").textContent=title;el("waitMsg").textContent=msg}
+ $("question").textContent=q.q;
+ $("quizMsg").textContent="";
+ $("choices").innerHTML="";
+ q.a.forEach((txt,i)=>{
+   let b=document.createElement("button");
+   b.className="choice secondary";
+   b.textContent=`${String.fromCharCode(65+i)}. ${txt}`;
+   b.onclick=()=>answerQuiz(i===q.correct);
+   $("choices").appendChild(b);
+ });
+}
+async function answerQuiz(ok){if(!ok){$("quizMsg").textContent="❌ ยังไม่ถูก ลองใหม่อีกครั้ง";return}await set(ref(db,`rooms/${code}/quizPassed/${uid}`),true);let s=await get(ref(db,`rooms/${code}/quizPassed`));if(Object.values(s.val()||{}).filter(Boolean).length>=6&&me().seat===1)await beginRound(1)}
+async function claimAnimal(){
+ // claim one globally unused animal. Transaction on each animal prevents two rooms claiming the same one.
+ let usedInRoom=[...Object.keys(data.animalHistory||{}),...Object.values(data.rounds||{}).map(r=>r.animalId).filter(Boolean)];
+ let pool=animals.filter(a=>!usedInRoom.includes(a.id)).sort(()=>Math.random()-.5);
+ for(let a of pool){let r=await runTransaction(ref(db,`usedAnimals/${a.id}`),cur=>cur?undefined:{room:code,at:Date.now()});if(r.committed){await set(ref(db,`rooms/${code}/animalHistory/${a.id}`),true);return a.id}}
+ throw new Error("สัตว์ถูกใช้ครบ 60 ตัวแล้ว");
+}
+async function beginRound(n){try{let id=await claimAnimal();await update(ref(db,`rooms/${code}`),{status:"prompt",round:n,turn:1,roundStartedAt:Date.now(),[`rounds/${n}`]:{animalId:id,startedAt:Date.now(),turnQuizPassed:{}}})}catch(e){$("lobbyMsg").textContent=e.message}}
+function renderPrompt(){let key=`p${data.round}-${data.roundStartedAt}`;show("prompt");$("animalEmoji").textContent=animal(data.rounds[data.round].animalId).emoji;if(renderKey===key)return;renderKey=key;stop();countdown("promptTimer",5,async()=>update(ref(db,`rooms/${code}`),{status:"drawing",turn:1,turnStartedAt:Date.now()}))}
+function waiting(t,m){stop();show("wait");$("waitTitle").textContent=t;$("waitMsg").textContent=m}
+function setupCanvas(){let c=$("canvas"),r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=r.width*d;c.height=430*d;let x=c.getContext("2d");x.setTransform(d,0,0,d,0,0);x.fillStyle="#fff";x.fillRect(0,0,r.width,430);x.lineWidth=7;x.lineCap="round";x.strokeStyle="#111"}
+function turnQuestionFor(seat,round){
+  // Different deterministic question by room + round + drawing seat.
+  const roomNo=Number(code.slice(4))||1;
+  const idx=((roomNo-1)*12+(Number(round)-1)*4+(Number(seat)-2))%questions.length;
+  return questions[idx];
+}
+function renderTurnQuiz(t){
+  stop();show("turnQuiz");
+  const q=turnQuestionFor(t,data.round);
+  $("turnQuestion").textContent=q.q;
+  $("turnQuizMsg").textContent="";
+  $("turnChoices").innerHTML="";
+  q.a.forEach((txt,i)=>{
+    const b=document.createElement("button");
+    b.className="choice secondary";
+    b.textContent=`${String.fromCharCode(65+i)}. ${txt}`;
+    b.onclick=()=>answerTurnQuiz(t,i===q.correct);
+    $("turnChoices").appendChild(b);
+  });
+}
+async function answerTurnQuiz(t,ok){
+  if(!ok){
+    $("turnQuizMsg").textContent="❌ ยังไม่ถูก ลองตอบใหม่อีกครั้ง";
+    return;
+  }
+  // Only after correct answer is the previous drawing unlocked.
+  await set(ref(db,`rooms/${code}/rounds/${data.round}/turnQuizPassed/${t}`),true);
+}
+function renderDraw(t){let key=`d${data.round}-${t}-${data.turnStartedAt}`;show("draw");$("drawTitle").textContent=`✏️ รอบ ${data.round}/3 • คนวาด ${t}/5`;if(t>1){$("prevBox").classList.remove("hidden");$("prevImg").src=data.rounds[data.round].drawings?.[t-1]||""}else $("prevBox").classList.add("hidden");if(renderKey===key)return;renderKey=key;setupCanvas();stop();countdown("drawTimer",20,()=>submitDrawing(t))}
+async function submitDrawing(t){let img=$("canvas").toDataURL("image/jpeg",.5),u={};u[`rounds/${data.round}/drawings/${t}`]=img;if(t<5){u.turn=t+1;u.turnStartedAt=Date.now()}else{u.status="answer";u.turn=6;u.answerStartedAt=Date.now()}await update(ref(db,`rooms/${code}`),u)}
+function renderAnswer(){let r=data.rounds[data.round],key=`a${data.round}-${data.answerStartedAt}`;show("answer");$("answerImg").src=r.drawings?.[5]||"";let elapsed=Math.floor((Date.now()-Number(data.answerStartedAt))/1000),left=Math.max(0,60-elapsed);$("answerTimer").textContent=left;
+ if(renderKey!==key){renderKey=key;$("answerText").value="";$("answerMsg").textContent="";stop();timer=setInterval(()=>{let l=Math.max(0,60-Math.floor((Date.now()-Number(data.answerStartedAt))/1000));$("answerTimer").textContent=l;if(l<=0){stop();timeoutRound()}},250)}}
+async function submitAnswer(){let left=Number($("answerTimer").textContent);if(left<=0)return;let r=data.rounds[data.round],text=$("answerText").value;if(!answerMatches(r.animalId,text)){$("answerMsg").textContent="❌ ยังไม่ถูก ลองใหม่ได้จนหมดเวลา";return}
+ let elapsed=Math.min(60,Math.max(0,(Date.now()-Number(data.answerStartedAt))/1000));await finishRound(true,elapsed,text)}
+async function timeoutRound(){let snap=await get(ref(db,`rooms/${code}/status`));if(snap.val()!=="answer")return;await finishRound(false,60,"")}
+async function finishRound(correct,elapsed,text){let n=Number(data.round),a=animal(data.rounds[n].animalId);let u={status:"roundResult"};u[`rounds/${n}/correct`]=correct;u[`rounds/${n}/elapsed`]=Number(elapsed.toFixed(1));u[`rounds/${n}/answer`]=text;u[`rounds/${n}/finishedAt`]=Date.now();await update(ref(db,`rooms/${code}`),u);await writeLeaderboard(n,correct,elapsed,a.name)}
+async function writeLeaderboard(n,correct,elapsed,answer){let ps=players().map(p=>p.name);let rounds={...(data.rounds||{})};rounds[n]={...(rounds[n]||{}),correct,elapsed};let done=Object.values(rounds).filter(r=>r.finishedAt||r.correct!==undefined);let correctRounds=done.filter(r=>r.correct).length,totalTime=done.reduce((s,r)=>s+Number(r.elapsed||60),0);await set(ref(db,`leaderboard/${code}`),{room:code,players:ps,correctRounds,totalTime:Number(totalTime.toFixed(1)),roundsFinished:done.length,updatedAt:Date.now()})}
+function renderRoundResult(){stop();show("roundResult");let r=data.rounds[data.round],a=animal(r.animalId);$("roundHeadline").textContent=r.correct?"🎉 ตอบถูก!":"⏰ หมดเวลา";$("roundOriginal").textContent=a.emoji;$("roundAnswer").textContent=`เฉลย: ${a.name}${r.correct?` • ${Number(r.elapsed).toFixed(1)} วินาที`:""}`;$("roundGallery").innerHTML=[1,2,3,4,5].map(i=>`<div class="result"><h3>ภาพคนที่ ${i}</h3><img src="${r.drawings?.[i]||""}"></div>`).join("");
+ if(me().seat===1&&Number(data.round)<3){$("nextRound").classList.remove("hidden");$("nextRound").textContent=`▶ เริ่มรอบ ${Number(data.round)+1}`}else $("nextRound").classList.add("hidden")}
+async function nextRound(){await beginRound(Number(data.round)+1)}
+async function showLeaderboard(){let s=await get(ref(db,"leaderboard")),rows=Object.values(s.val()||{});rows.sort((a,b)=>(b.correctRounds-a.correctRounds)||(a.totalTime-b.totalTime));show("leaderboard");$("ranking").innerHTML=rows.map((r,i)=>`<div class="rank"><h3>${i+1}. ${r.room}</h3><div>👥 ${(r.players||[]).map(esc).join(" • ")}</div><div>✅ ${r.correctRounds||0}/3 รอบ • ⏱ ${(r.totalTime||0).toFixed(1)} วินาที</div></div>`).join("")||"<div class=status>ยังไม่มีผลการแข่งขัน</div>"}
+async function startQuiz(){quizRenderKey="";await update(ref(db,`rooms/${code}`),{status:"quiz",quizPassed:null,rounds:null,round:null})}
+async function resetGame(){
+ if(me()?.seat!==1)return;
+ if(!confirm(`🔄 เริ่ม ${code} ใหม่ทั้งหมด?\n\nรายชื่อผู้เล่น Quiz รูปวาด คำตอบ คะแนน Leaderboard และประวัติสัตว์ของห้องนี้จะถูกล้างทั้งหมด`))return;
+ stop();renderKey="";quizRenderKey="";
 
-function setupCanvas(){const cv=el("drawCanvas"),ratio=window.devicePixelRatio||1,rect=cv.getBoundingClientRect();cv.width=Math.floor(rect.width*ratio);cv.height=Math.floor(430*ratio);const ctx=cv.getContext("2d");ctx.setTransform(ratio,0,0,ratio,0,0);ctx.fillStyle="#fff";ctx.fillRect(0,0,rect.width,430);ctx.lineWidth=7;ctx.lineCap="round";ctx.lineJoin="round";ctx.strokeStyle="#111"}
-function renderDrawing(turn){const key=`draw:${roomData.roundStartedAt}:${turn}`;showScreen("drawScreen");el("drawTitle").textContent=`✏️ คนวาด ${turn}/5`;if(turn===1){el("previousReference").classList.add("hidden");el("drawMsg").textContent="วาดจากภาพที่จำไว้ • ส่งอัตโนมัติเมื่อหมดเวลา"}else{el("previousReference").classList.remove("hidden");el("previousImage").src=roomData.drawings?.[String(turn-1)]||"";el("drawMsg").textContent="ดูภาพคนก่อน แล้ววาดใหม่ • ส่งอัตโนมัติ"}if(currentKey===key)return;currentKey=key;setupCanvas();clearInterval(drawTimer);const started=Number(roomData.turnStartedAt)||Date.now();function tick(){const elapsed=Math.floor((Date.now()-started)/1000),left=Math.max(0,20-elapsed);el("drawTimer").textContent=String(left);if(left<=0){clearInterval(drawTimer);autoSubmitDrawing(turn)}}tick();drawTimer=setInterval(tick,250)}
-async function autoSubmitDrawing(turn){if(el("drawMsg").dataset.sent==="1")return;el("drawMsg").dataset.sent="1";const image=el("drawCanvas").toDataURL("image/jpeg",.55),updates={};updates[`drawings/${turn}`]=image;if(turn<5){updates.turn=turn+1;updates.turnStartedAt=Date.now()}else{updates.status="answer";updates.turn=6;updates.answerStartedAt=Date.now()}await update(ref(db,"rooms/"+roomCode),updates);el("drawMsg").dataset.sent="0"}
+ // คืนสัตว์ที่ห้องนี้เคยจองไว้กลับสู่คลังทั้งหมด
+ const usedSnap=await get(ref(db,"usedAnimals"));
+ const used=usedSnap.val()||{};
+ const rootUpdates={};
+ Object.entries(used).forEach(([animalId,claim])=>{
+   if(claim&&claim.room===code)rootUpdates[`usedAnimals/${animalId}`]=null;
+ });
 
-function renderTypedAnswer(){const key=`answer:${roomData.answerStartedAt}`;showScreen("answerScreen");el("answerImage").src=roomData.drawings?.["5"]||"";if(currentKey===key)return;currentKey=key;el("answerInput").value="";el("answerMsg").textContent="";el("submitAnswerBtn").disabled=false;clearInterval(answerTimer);const started=Number(roomData.answerStartedAt)||Date.now();function tick(){const elapsed=Math.floor((Date.now()-started)/1000),left=Math.max(0,30-elapsed);el("answerTimer").textContent=String(left);if(left<=0){clearInterval(answerTimer);el("submitAnswerBtn").disabled=true;el("answerInput").disabled=true;el("answerMsg").textContent="⏰ หมดเวลา 30 วินาที"}}tick();answerTimer=setInterval(tick,250)}
+ // ล้างคะแนนและล้างห้องทั้งก้อน รวมรายชื่อ/seat เดิม
+ rootUpdates[`leaderboard/${code}`]=null;
+ rootUpdates[`rooms/${code}`]=null;
+ await update(ref(db),rootUpdates);
 
-async function submitTypedAnswer(){if(!roomData||roomData.status!=="answer")return;const started=Number(roomData.answerStartedAt)||Date.now(),elapsedMs=Date.now()-started;if(elapsedMs>30000){el("answerMsg").textContent="⏰ หมดเวลาแล้ว";return}const animal=animalById(roomData.promptId),value=el("answerInput").value;if(!isCorrectAnswer(value,animal)){el("answerMsg").innerHTML='<span class="bad">❌ ยังไม่ถูก ลองใหม่เร็ว!</span>';el("answerInput").focus();return}
- const elapsedSec=Math.round(elapsedMs/100)/10,players=getPlayers(roomData),names=players.map(p=>p.name);const result={roomCode,players:names,answer:animal.name,elapsedSec,correctAt:Date.now(),promptId:animal.id};await set(ref(db,"leaderboard/"+roomCode),result);await update(ref(db,"rooms/"+roomCode),{status:"results",result});}
-
-function renderResults(){stopTimers();showScreen("resultsScreen");const animal=animalById(roomData.promptId),drawings=roomData.drawings||{},result=roomData.result;el("roomResultText").textContent=result?`✅ ${roomCode} ตอบถูก ${result.answer} ใน ${result.elapsedSec.toFixed(1)} วินาที`:"จบรอบ";let html=`<div class="result-item"><h3>🖼️ ภาพต้นฉบับ — ${animal.name}</h3><div class="result-original"><div class="animal-emoji">${animal.emoji}</div></div></div>`;for(let i=1;i<=5;i++)html+=`<div class="result-item"><h3>✏️ ภาพคนที่ ${i}</h3><img src="${drawings[String(i)]||""}" alt="ภาพคนที่ ${i}"></div>`;el("resultsGallery").innerHTML=html;if(getMe()?.host)el("backLobbyBtn").classList.remove("hidden");else el("backLobbyBtn").classList.add("hidden")}
-
-async function showLeaderboard(){stopTimers();showScreen("leaderboardScreen");el("leaderboardList").innerHTML='<div class="status">กำลังโหลด...</div>';const snap=await get(ref(db,"leaderboard"));const rows=snap.exists()?Object.values(snap.val()):[];rows.sort((a,b)=>Number(a.elapsedSec)-Number(b.elapsedSec));if(!rows.length){el("leaderboardList").innerHTML='<div class="status">ยังไม่มีทีมตอบถูก</div>';return}el("leaderboardList").innerHTML=rows.map((r,i)=>`<div class="leader-row"><div class="leader-top"><span class="rank">${i+1}. ${escapeHtml(r.roomCode)}</span><b>${Number(r.elapsedSec).toFixed(1)} วิ</b></div><div>🎯 ${escapeHtml(r.answer)}</div><div class="names">👥 ${(r.players||[]).map(escapeHtml).join(" • ")}</div></div>`).join("")}
-
-async function backToLobby(){if(!getMe()?.host)return;await update(ref(db,"rooms/"+roomCode),{status:"lobby",quizPassed:null,drawings:null,result:null,turn:null,turnStartedAt:null,answerStartedAt:null,roundStartedAt:null})}
-async function leaveRoom(){if(!roomCode||!roomData)return;await remove(ref(db,`rooms/${roomCode}/players/${myId}`));if(roomData.hostId===myId){const remaining=getPlayers(roomData).filter(p=>p.id!==myId);if(remaining.length){const next=remaining[0];await update(ref(db,"rooms/"+roomCode),{hostId:next.id});await update(ref(db,`rooms/${roomCode}/players/${next.id}`),{host:true})}}if(unsubscribeRoom)unsubscribeRoom();stopTimers();roomCode="";roomData=null;showScreen("homeScreen")}
-
-function canvasPos(ev){const r=el("drawCanvas").getBoundingClientRect(),p=ev.touches?ev.touches[0]:ev;return{x:p.clientX-r.left,y:p.clientY-r.top}}
-function pointerDown(ev){if(el("drawScreen").classList.contains("hidden"))return;ev.preventDefault();drawing=true;const p=canvasPos(ev);lastX=p.x;lastY=p.y}
-function pointerMove(ev){if(!drawing)return;ev.preventDefault();const p=canvasPos(ev),ctx=el("drawCanvas").getContext("2d");ctx.beginPath();ctx.moveTo(lastX,lastY);ctx.lineTo(p.x,p.y);ctx.stroke();lastX=p.x;lastY=p.y}
-function pointerUp(){drawing=false}
-
-initRoomSelect();
-el("joinFixedRoomBtn").onclick=joinFixedRoom;el("startGameBtn").onclick=startGame;el("leaveRoomBtn").onclick=leaveRoom;el("submitAnswerBtn").onclick=submitTypedAnswer;el("answerInput").addEventListener("keydown",e=>{if(e.key==="Enter")submitTypedAnswer()});el("leaderboardBtn").onclick=showLeaderboard;el("resultsLeaderboardBtn").onclick=showLeaderboard;el("leaderBackBtn").onclick=()=>{if(roomData)renderState();else showScreen("homeScreen")};el("backLobbyBtn").onclick=backToLobby;
-const cv=el("drawCanvas");cv.addEventListener("mousedown",pointerDown);cv.addEventListener("mousemove",pointerMove);cv.addEventListener("mouseup",pointerUp);cv.addEventListener("mouseleave",pointerUp);cv.addEventListener("touchstart",pointerDown,{passive:false});cv.addEventListener("touchmove",pointerMove,{passive:false});cv.addEventListener("touchend",pointerUp);
-</script>
-</body>
-</html>
+ data=null;
+ if(unsub){unsub();unsub=null}
+ show("home");
+ $("homeMsg").textContent=`✅ ${code} เริ่มใหม่แล้ว กรุณาใส่ชื่อและเข้าห้องใหม่`;
+}
+async function leave(){quizRenderKey="";let m=me();if(m)await remove(ref(db,`rooms/${code}/players/${uid}`));if(unsub)unsub();data=null;code="";show("home")}
+function countdown(id,n,done){let started=Date.now();$(id).textContent=n;timer=setInterval(()=>{let l=Math.max(0,n-Math.floor((Date.now()-started)/1000));$(id).textContent=l;if(l<=0){stop();done()}},200)}
+function pos(e){let r=$("canvas").getBoundingClientRect(),p=e.touches?e.touches[0]:e;return{x:p.clientX-r.left,y:p.clientY-r.top}}
+function down(e){if($("draw").classList.contains("hidden"))return;e.preventDefault();drawing=true;let p=pos(e);lx=p.x;ly=p.y}function move(e){if(!drawing)return;e.preventDefault();let p=pos(e),x=$("canvas").getContext("2d");x.beginPath();x.moveTo(lx,ly);x.lineTo(p.x,p.y);x.stroke();lx=p.x;ly=p.y}function up(){drawing=false}
+function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+$("join").onclick=join;$("start").onclick=startQuiz;$("resetGame").onclick=resetGame;$("leave").onclick=leave;$("submitAnswer").onclick=submitAnswer;$("nextRound").onclick=nextRound;$("leader").onclick=showLeaderboard;$("showLeader").onclick=showLeaderboard;$("back").onclick=()=>data?render():show("home");
+let c=$("canvas");c.addEventListener("mousedown",down);c.addEventListener("mousemove",move);c.addEventListener("mouseup",up);c.addEventListener("mouseleave",up);c.addEventListener("touchstart",down,{passive:false});c.addEventListener("touchmove",move,{passive:false});c.addEventListener("touchend",up);
+</script></main></body></html>
